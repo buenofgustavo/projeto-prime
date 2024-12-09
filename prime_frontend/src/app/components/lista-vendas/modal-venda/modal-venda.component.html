@@ -1,0 +1,102 @@
+<nb-card size="large" class="form-card">
+    <nb-card-body>
+        <form #nameForm="ngForm" class="step-container">
+            <div class="form-row">
+                <div class="form-field">
+                    <mat-label class="data-venda-label">Data da Venda</mat-label>
+                    <mat-form-field appearance="fill" class="data-venda-field">
+                        <input [disabled]=" data.vendasComProdutosDTO.vendasDTO.status == 'Pago' || !data.isEdit "
+                            matInput [matDatepicker]="picker" placeholder="Selecione a data"
+                            [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.dataVenda" name="dataVenda" readonly>
+                        <mat-datepicker-toggle
+                            [disabled]=" data.vendasComProdutosDTO.vendasDTO.status == 'Pago' || !data.isEdit "
+                            matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <nb-form-field class="form-field">
+                    <label for="vendasDTO.status">Status</label>
+                    <input disabled type="text" nbInput fullWidth id="vendasDTO.status"
+                        [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.status" name="vendasDTO.status" required>
+                </nb-form-field>
+
+                <nb-form-field class="form-field">
+                    <label for="vendasDTO.nomeCliente">Cliente</label>
+                    <input disabled type="text" nbInput fullWidth id="vendasDTO.nomeCliente"
+                        [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.nomeCliente" name="vendasDTO.nomeCliente" required>
+                </nb-form-field>
+
+                <nb-form-field class="form-field">
+                    <label for="valorPago">Valor Pago</label>
+                    <input type="text" nbInput fullWidth id="valorPago"
+                        [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.valorPago" name="valorPago" required
+                        currencyMask [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}"
+                        disabled
+                        >
+                </nb-form-field>
+
+                <nb-form-field class="form-field">
+                    <label for="valorTotalVenda">Valor Total</label>
+                    <input disabled type="text" nbInput fullWidth id="valorTotalVenda"
+                        [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.valorTotalVenda" name="valorTotalVenda"
+                        required currencyMask [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}">
+                </nb-form-field>
+
+                <nb-form-field class="form-field">
+                    <label for="valorPendente">Valor Pendente</label>
+                    <input disabled type="text" nbInput fullWidth id="valorPendente"
+                        [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.valorPendente" name="valorPendente" required
+                        currencyMask [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}">
+                </nb-form-field>
+            </div>
+
+            <!-- Tabela para exibir produtos vendidos -->
+            <div class="produtos-table-container">
+                <table class="produtos-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Produto</th>
+                            <th>Qnt</th>
+                            <th>Unit.</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of data.vendasComProdutosDTO.produtosVendidosDTO; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ p.produto }}</td>
+                            <td>{{ p.quantidade }}</td>
+                            <td>{{ p.valorUnitario }}</td>
+                            <td>{{ p.valorTotalProduto }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-field">
+                <label for="observacao">Observação</label>
+                <input type="text" nbInput fullWidth id="observacao" [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.observacao" 
+                name="observacao" required [disabled]=" !data.isEdit ">
+            </div>
+
+            <div class="form-row">
+                <button [disabled]=" data.vendasComProdutosDTO.vendasDTO.status == 'Pago' || !data.isEdit " nbButton
+                    fullWidth (click)="atualizar()" status="success" class="form-button">Atualizar</button>
+            </div>
+            <div class="delete-button-container">
+                <button 
+                  nbButton 
+                  shape="round" 
+                  status="danger" 
+                  size="small" 
+                  (click)="deletar(data.vendasComProdutosDTO)" 
+                  class="delete-button"
+                  [disabled]="data.vendasComProdutosDTO.vendasDTO.status == 'Pago' || !data.isEdit">
+                  <nb-icon icon="trash-2-outline"></nb-icon>
+                </button>
+              </div>
+        </form>
+    </nb-card-body>
+</nb-card>

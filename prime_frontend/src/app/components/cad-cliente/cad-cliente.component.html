@@ -1,0 +1,67 @@
+<nb-card size="large" class="form-card">
+    <nb-card-header class="form-header">Cadastro de Cliente</nb-card-header>
+    <nb-card-body>
+
+        <form #nameForm="ngForm" class="step-container">
+            <!-- Primeira Linha (Duas colunas) -->
+            <div class="form-row">
+                <!-- Nome -->
+                <nb-form-field class="form-field">
+                    <label for="nome">Nome</label>
+                    <input autocomplete="off" type="text" nbInput fullWidth id="nome" placeholder="Digite o nome do cliente" name="nome" [(ngModel)]="cliente.nome" required>
+                </nb-form-field>
+
+                <!-- Categoria -->
+                <nb-form-field class="form-field">
+                    <label for="categoria">Categoria</label>
+                    <nb-select fullWidth id="categoria" placeholder="Selecione o tipo" [(ngModel)]="cliente.categoria" name="categoria" required>
+                        <nb-option value="Indústria">Indústria</nb-option>
+                        <nb-option value="Torneadora">Torneadora</nb-option>
+                        <nb-option value="Hospital">Hospital</nb-option>
+                        <nb-option value="Móveis">Móveis</nb-option>
+                    </nb-select>
+                </nb-form-field>
+            </div>
+
+            <!-- Segunda Linha (Duas colunas) -->
+            <div class="form-row">
+                <!-- Responsável -->
+                <nb-form-field class="form-field">
+                    <label for="responsavel">Responsável</label>
+                    <input autocomplete="off" type="text" nbInput fullWidth id="responsavel" placeholder="Responsável pelo cliente" name="responsavel" [(ngModel)]="cliente.responsavel" required>
+                </nb-form-field>
+
+                <!-- Contato -->
+                <nb-form-field class="form-field">
+                    <label for="contato">Contato</label>
+                    <input autocomplete="off" type="text" nbInput fullWidth [textMask]="{mask: telefoneMask}"[textMask]="{mask: telefoneMask}" id="contato" placeholder="Telefone de contato" name="contato" [(ngModel)]="cliente.contato" required>
+                </nb-form-field>
+            </div>
+
+            <div class="form-row">
+                <nb-form-field class="form-field">
+                    <label for="cidade">Cidade</label>
+                    <nb-select fullWidth id="cidade" placeholder="Selecione a cidade" [(ngModel)]="cliente.cidade" name="cidade" required>
+                        <nb-option value="Goiânia">Goiânia</nb-option>
+                        <nb-option value="Aparecida de Goiânia">Aparecida de Goiânia</nb-option>
+                        <nb-option value="Trindade">Trindade</nb-option>
+                        <nb-option value="Goianira">Goianira</nb-option>
+                        <nb-option value="Senador Canedo">Senador Canedo</nb-option>
+                        <nb-option value="Itaberaí">Itaberaí</nb-option>
+                        <nb-option value="Santa Rosa">Damolândia</nb-option>
+                        <nb-option value="Vianópolis">Vianópolis</nb-option>
+                        <nb-option value="Nerópolis">Nerópolis</nb-option>
+                        <nb-option value="Silvânia">Silvânia</nb-option>
+                        <nb-option value="Araçu">Araçu</nb-option>
+                    </nb-select>
+                </nb-form-field>
+            </div>
+
+            <!-- Botão de cadastro -->
+            <div class="form-row">
+                <button nbButton fullWidth (click)="create()" status="primary" class="form-button">Cadastrar</button>
+            </div>
+        </form>
+
+    </nb-card-body>
+</nb-card>

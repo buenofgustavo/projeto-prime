@@ -1,0 +1,2 @@
+ALTER TABLE vendas
+    ADD COLUMN data_venda TIMESTAMP

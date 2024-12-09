@@ -1,0 +1,115 @@
+.loading-spinner-overlay {
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-color: rgba(216, 219, 212, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    /* Adicionado para organizar os itens em uma linha */
+}
+
+/* Container da tabela com rolagem horizontal em telas menores */
+.table-container {
+    overflow-x: auto;
+}
+
+/* Estilo para a tabela */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Estilo para o cabeçalho e células */
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Alternância de cor nas linhas da tabela */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Centraliza o paginator e reduz padding e margens */
+.mat-paginator {
+    padding: 0;
+}
+
+.mat-paginator-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Centraliza o paginator */
+    gap: 4px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+    /* Diminui a fonte */
+}
+
+/* Botões de navegação mais compactos */
+.mat-paginator-navigation-next,
+.mat-paginator-navigation-previous,
+.mat-paginator-navigation-first,
+.mat-paginator-navigation-last {
+    min-width: 24px;
+    /* Diminui tamanho mínimo */
+    min-height: 24px;
+    padding: 0;
+}
+
+/* Reduz tamanho e padding da seleção de página */
+.mat-paginator-page-size-select {
+    max-width: 50px;
+}
+
+.mat-select-trigger {
+    font-size: 0.75rem;
+    padding: 2px 4px;
+}
+
+/* Oculta texto do label para economizar espaço, caso seja opcional */
+.mat-paginator-range-label {
+    display: none;
+}
+
+/* Menor margem entre botões */
+.mat-paginator-icon {
+    margin: 0 2px;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+
+    th,
+    td {
+        padding: 6px;
+        font-size: 0.7rem;
+    }
+
+    /* Permitir rolagem horizontal em dispositivos menores */
+    .table-container {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        /* Melhora a rolagem em iOS */
+    }
+
+    .mat-paginator-container {
+        gap: 2px;
+        /* Menor espaçamento em dispositivos móveis */
+    }
+
+    .campos-menores {
+        font-size: 0.6rem;
+    }
+
+}

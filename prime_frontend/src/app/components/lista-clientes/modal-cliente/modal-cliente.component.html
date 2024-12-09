@@ -1,0 +1,83 @@
+<nb-card size="large" class="form-card">
+    <nb-card-body>
+        <form #nameForm="ngForm" class="step-container">
+            <div>
+
+                <p>Data de cadastro: {{ data.clientes.dataCadastro | date: 'dd/MM/yyyy' }} </p>
+
+                <nb-form-field class="form-field">
+                    <label for="nome">Nome</label>
+                    <input [disabled]=" data.acao != 'editar' " disabled type="text" nbInput fullWidth id="nome"
+                        [(ngModel)]="data.clientes.nome" name="nome" required>
+                </nb-form-field>
+
+                <nb-form-field class="form-field">
+                    <label for="responsavel">Responsável</label>
+                    <input [disabled]=" data.acao != 'editar' " disabled type="text" nbInput fullWidth id="responsavel"
+                        [(ngModel)]="data.clientes.responsavel" name="responsavel" required>
+                </nb-form-field>
+
+                <nb-form-field class="form-field">
+                    <label for="contato">Contato</label>
+                    <input [disabled]=" data.acao != 'editar' " disabled type="text" nbInput fullWidth id="contato"
+                        [(ngModel)]="data.clientes.contato" [textMask]="{mask: telefoneMask}" name="contato" required>
+                </nb-form-field>
+
+
+                <nb-form-field class="form-field">
+                    <label for="cidade">Cidade</label>
+                    <nb-select [disabled]=" data.acao != 'editar' " fullWidth id="cidade"
+                        placeholder="Selecione a cidade" [(ngModel)]="data.clientes.cidade" name="cidade" required>
+                        <nb-option value="Goiânia">Goiânia</nb-option>
+                        <nb-option value="Aparecida de Goiânia">Aparecida de Goiânia</nb-option>
+                        <nb-option value="Trindade">Trindade</nb-option>
+                        <nb-option value="Goianira">Goianira</nb-option>
+                        <nb-option value="Senador Canedo">Senador Canedo</nb-option>
+                        <nb-option value="Itaberaí">Itaberaí</nb-option>
+                        <nb-option value="Santa Rosa">Damolândia</nb-option>
+                        <nb-option value="Vianópolis">Vianópolis</nb-option>
+                        <nb-option value="Nerópolis">Nerópolis</nb-option>
+                        <nb-option value="Silvânia">Silvânia</nb-option>
+                        <nb-option value="Araçu">Araçu</nb-option>
+                    </nb-select>
+                </nb-form-field>
+
+                <nb-form-field class="form-field">
+                    <label for="categoria">Categoria</label>
+                    <nb-select [disabled]=" data.acao != 'editar' " fullWidth id="categoria"
+                        placeholder="Selecione o tipo" [(ngModel)]="data.clientes.categoria" name="categoria" required>
+                        <nb-option value="Indústria">Indústria</nb-option>
+                        <nb-option value="Torneadora">Torneadora</nb-option>
+                        <nb-option value="Hospital">Hospital</nb-option>
+                        <nb-option value="Móveis">Móveis</nb-option>
+                    </nb-select>
+                </nb-form-field>
+
+                <nb-form-field class="form-field" *ngIf="data.acao == 'pagar'">
+                    <label for="valorASerPago">Valor Pago</label>
+                    <input [disabled]="data.clientes.saldoDevedor == 0" type="text" nbInput fullWidth id="valorASerPago"
+                        [(ngModel)]="valorASerPago" name="valorASerPago" required currencyMask
+                        [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}">
+                </nb-form-field>
+
+                <nb-form-field class="form-field">
+                    <label for="saldoDevedor">Saldo Devedor</label>
+                    <input disabled type="text" nbInput fullWidth id="saldoDevedor"
+                        [(ngModel)]="data.clientes.saldoDevedor" name="saldoDevedor" required currencyMask
+                        [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}">
+                </nb-form-field>
+
+                <div class="form-row" *ngIf="data.acao == 'pagar'">
+                    <button [disabled]=" data.clientes.saldoDevedor == 0 " nbButton fullWidth
+                        (click)="pagarSaldoDevedor()" status="success" class="form-button">Atualizar Pagamento</button>
+                </div>
+
+                <div class="form-row" *ngIf="data.acao == 'editar'">
+                    <button nbButton fullWidth (click)="atualizarCliente()" status="success"
+                        class="form-button">Atualizar Cliente</button>
+                </div>
+
+            </div>
+        </form>
+    </nb-card-body>
+</nb-card>

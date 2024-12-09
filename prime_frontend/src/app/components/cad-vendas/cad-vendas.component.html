@@ -1,0 +1,147 @@
+<nb-card class="form-card" size="large">
+  <nb-card-header class="form-header">Cadastro de Venda</nb-card-header>
+  <nb-card-body>
+    <form #nameForm="ngForm" class="step-container">
+      <div class="form-row">
+
+        <!-- Data da Venda -->
+        <div class="form-field">
+          <mat-label class="data-venda-label">Data da Venda</mat-label>
+          <mat-form-field appearance="fill" class="data-venda-field">
+            <input matInput [matDatepicker]="picker" placeholder="Selecione a data"
+              [(ngModel)]="vendas.vendasDTO.dataVenda" name="dataVenda" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Cliente -->
+        <div class="form-field full-width">
+          <nb-form-field>
+            <label for="cliente">Cliente</label>
+            <input fullWidth autocomplete="off" [nbAutocomplete]="auto" class="todos-inputs" id="cliente"
+              [formControl]="inputFormControl" [(ngModel)]="vendas.vendasDTO.nomeCliente" nbInput placeholder=""
+              name="cliente">
+          </nb-form-field>
+          <nb-autocomplete #auto>
+            <nb-option *ngFor="let cliente of filteredClientes$ | async" [value]="cliente.nome"
+              (click)="setClienteId(cliente.id)">
+              {{ cliente.nome }}
+            </nb-option>
+          </nb-autocomplete>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <!-- Motorista -->
+        <div class="form-field">
+          <label for="vendasDTO.motorista">Motorista</label>
+          <nb-select for="vendasDTO.motorista" fullWidth id="vendasDTO.motorista" placeholder="Selecione o motorista"
+            [(ngModel)]="vendas.vendasDTO.motorista" name="vendasDTO.motorista" required>
+            <nb-option value="Francisco">Francisco</nb-option>
+            <nb-option value="Claúdio">Claúdio</nb-option>
+            <nb-option value="Marcos">Marcos</nb-option>
+          </nb-select>
+        </div>
+
+
+
+      </div>
+
+      <div class="form-row">
+        <!-- Produto -->
+        <div class="form-field">
+          <label for="produto">Produto</label>
+          <nb-select for="produto" fullWidth id="produto" placeholder="Selecione o tipo" [(ngModel)]="produto.produto"
+            name="produto" required>
+            <nb-option *ngFor="let opcao of produtosOpcoes" [value]="opcao.valor">{{ opcao.descricao }}</nb-option>
+          </nb-select>
+        </div>
+
+        <div class="form-field">
+          <label for="quantidade">Quantidade</label>
+          <input type="number" nbInput fullWidth id="quantidade" [(ngModel)]="produto.quantidade" name="quantidade"
+            (ngModelChange)="atualizarValorTotalProduto()" required>
+        </div>
+
+ 
+
+      </div>
+
+      <div class="form-row">
+        
+        <div class="form-field">
+          <label for="valorUnitario">Valor Unitário</label>
+          <input type="text" currencyMask [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}"
+           nbInput fullWidth id="valorUnitario" [(ngModel)]="produto.valorUnitario"
+            name="valorUnitario" (ngModelChange)="atualizarValorTotalProduto()" required>
+        </div>
+
+        <!-- Valor Total Produto -->
+        <div class="form-field">
+          <label for="valorTotalProduto">Valor Produto</label>
+          <input type="text" disabled nbInput  fullWidth id="valorTotalProduto" [(ngModel)]="produto.valorTotalProduto"
+            name="valorTotalProduto" required
+            currencyMask [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}">
+        </div>
+
+      </div>
+
+      <div class="produtos-table-container">
+        <table class="produtos-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Produto</th>
+              <th>Quantidade</th>
+              <th>Valor Unitário</th>
+              <th>Valor Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of vendas.produtosVendidosDTO; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ p.produto }}</td>
+              <td>{{ p.quantidade }}</td>
+              <td>{{ p.valorUnitario | currency: 'BRL' }}</td>
+              <td>{{ p.valorTotalProduto | currency: 'BRL' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <button type="button" nbButton (click)="addProduto()" status="info">Adicionar Produto</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="valorPago">Valor Pago</label>
+          <input type="text" nbInput fullWidth id="valorPago" [(ngModel)]="vendas.vendasDTO.valorPago"
+          currencyMask [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}"
+            name="valorPago" required>
+        </div>
+        <div class="form-field">
+          <label for="valorTotal">Valor Total</label>
+          <input disabled type="text" nbInput fullWidth id="valorTotal" [(ngModel)]="totalVenda" name="valorTotal"
+          currencyMask [options]="{prefix: 'R$', thousands: '.', decimal: ',', precision: 2}"
+            required>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="observacao">Observação</label>
+        <input type="text" nbInput fullWidth id="observacao" [(ngModel)]="vendas.vendasDTO.observacao" name="observacao" required>
+      </div>
+
+      <div class="form-button">
+        <button nbButton fullWidth (click)="create()"
+          [disabled]="vendas.vendasDTO.clienteId == 0 || vendas.produtosVendidosDTO.length < 1"
+          status="success">Cadastrar</button>
+      </div>
+
+    </form>
+  </nb-card-body>
+</nb-card>

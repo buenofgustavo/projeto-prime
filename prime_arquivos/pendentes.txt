@@ -1,0 +1,21 @@
+- Corrigir notas (OK)
+- Excluir notas (OK)
+- Campo observações nas notas (OK)
+- Retirar campo nome das notas (OK)
+- Editar clientes (OK)
+- Corrigir pagamentos, ao cadastrar com valor pago tem que ser contabilizado
+- Colocar um botão para limpar produtos 
+- Corrigir barra de rolagem
+- Proibir apertar duas vezes para cadastrar 
+- Ver erro de valores inválidos ao cadastrar nota 
+- Mudar nome do cliente Rei do Shassi, multh moveis, Tendas Noroeswte	
+- mudar senha
+- deixar sempre logado no sistema
+- Cadastrar produtos 
+- Cadastrar cidades
+- Cadastrar categorias
+- Relatórios no Power BI
+- Erro ao pagar, gerando pagamentos indevidos
+- Refatorar scss
+- Retirar botão excluir e colocar na tabela com modal de confirmação
+

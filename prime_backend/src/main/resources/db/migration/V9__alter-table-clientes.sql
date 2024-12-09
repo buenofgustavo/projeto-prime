@@ -1,0 +1,2 @@
+ALTER TABLE clientes
+    ADD COLUMN saldo_devedor DOUBLE PRECISION

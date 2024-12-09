@@ -1,0 +1,2 @@
+ALTER TABLE vendas
+    ADD COLUMN criado_por VARCHAR(255)
