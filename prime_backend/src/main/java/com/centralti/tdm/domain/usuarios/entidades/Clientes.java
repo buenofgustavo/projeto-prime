@@ -32,8 +32,8 @@ public class Clientes {
     @Column(name = "contato")
     private String contato;
 
-    @Column(name = "cidade")
-    private String cidade;
+    @Column(name = "cidade_id")
+    private Long cidadeId;
 
     @Column(name = "data_cadastro")
     private LocalDateTime dataCadastro;
@@ -51,7 +51,7 @@ public class Clientes {
         this.categoria = clientesDTO.categoria();
         this.responsavel = clientesDTO.responsavel();
         this.contato = clientesDTO.contato();
-        this.cidade = clientesDTO.cidade();
+        this.cidadeId = clientesDTO.cidadeId();
         this.dataCadastro = clientesDTO.dataCadastro();
         this.criadoPor = clientesDTO.criadoPor();
         this.saldoDevedor = clientesDTO.saldoDevedor();

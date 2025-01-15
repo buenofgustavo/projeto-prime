@@ -5,9 +5,11 @@ import { Router } from '@angular/router';
 import { NbSidebarService, NbToastrService } from '@nebular/theme';
 import { map, Observable, startWith } from 'rxjs';
 import { Clientes } from 'src/app/interface/clientes';
+import { Produtos } from 'src/app/interface/produtos';
 import { ProdutosVendidos } from 'src/app/interface/produtosVendidos';
 import { VendasComProdutosDTO } from 'src/app/interface/vendasComProdutos';
 import { ClientesService } from 'src/app/services/clientes/clientes.service';
+import { ProdutosService } from 'src/app/services/produtos/produtos.service';
 import { VendasService } from 'src/app/services/vendas/vendas.service';
 
 @Component({
@@ -35,10 +37,11 @@ export class CadVendasComponent implements OnInit  {
 
     produto: ProdutosVendidos = {
         vendaId: 0,
-        produto: '',
+        produtoId: 0,
         quantidade: 0,
         valorUnitario: 0,
-        valorTotalProduto: 0
+        valorTotalProduto: 0,
+        nomeProduto: ""
     }
 
     produtosOpcoes = [
@@ -53,6 +56,7 @@ export class CadVendasComponent implements OnInit  {
 
     ngOnInit() {
         this.getClientes();
+        this.getProdutos();
     }
 
     toggle() {
@@ -61,10 +65,10 @@ export class CadVendasComponent implements OnInit  {
 
     inputFormControl: FormControl;
     filteredClientes$: Observable<Clientes[]>;
-    clientes: Clientes[] = [];
     constructor(
         private vendasService: VendasService,
         private clientesService: ClientesService,
+        private produtosService: ProdutosService,
         private toastrService: NbToastrService, private router: Router,
         private sidebarService: NbSidebarService
     ) {
@@ -75,10 +79,18 @@ export class CadVendasComponent implements OnInit  {
         );
         this.toggle()
     }
-
+    
+    clientes: Clientes[] = [];
     getClientes(): void {
         this.clientesService.getClientes().subscribe(clientes => {
             this.clientes = clientes;
+        });
+    }
+
+    produtos: Produtos[] = [];
+    getProdutos(): void {
+        this.produtosService.get().subscribe(produtos => {
+            this.produtos = produtos;
         });
     }
 
@@ -102,7 +114,7 @@ export class CadVendasComponent implements OnInit  {
 
     totalVenda: number = 0
     addProduto() {
-        if (this.produto.produto == '' || this.produto.quantidade < 1 || this.produto.valorUnitario < 1) {
+        if (this.produto.produtoId == 0 || this.produto.quantidade < 1 || this.produto.valorUnitario < 1) {
             this.toastrService.danger(`Insira valores válidos`, "Danger");
         } else {
             const novoProduto = { ...this.produto }; // Cria uma cópia dos dados do produto
@@ -112,10 +124,11 @@ export class CadVendasComponent implements OnInit  {
             // Limpa os campos de produto após adicionar
             this.produto = {
                 vendaId: 0,
-                produto: '',
+                produtoId: 0,
                 quantidade: 0,
                 valorUnitario: 0,
                 valorTotalProduto: 0,
+                nomeProduto: ""
             };
         }
     }

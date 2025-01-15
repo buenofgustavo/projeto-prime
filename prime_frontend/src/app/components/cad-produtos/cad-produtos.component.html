@@ -1,0 +1,18 @@
+<nb-card size="large" class="form-card">
+    <nb-card-header class="form-header">Cadastro de Produtos</nb-card-header>
+    <nb-card-body>
+
+        <form #nameForm="ngForm" class="step-container">
+            <nb-form-field class="form-field">
+                <label for="nome">Nome</label>
+                <input autocomplete="off" type="text" nbInput fullWidth id="nome" placeholder="Digite o nome do produto"
+                    name="nome" [(ngModel)]="produtos.nome" required>
+            </nb-form-field>
+
+            <div class="form-row">
+                <button nbButton fullWidth (click)="create()" status="primary" class="form-button">Cadastrar</button>
+            </div>
+        </form>
+
+    </nb-card-body>
+</nb-card>

@@ -4,8 +4,9 @@ export interface Clientes {
   categoria: string;
   responsavel: string;
   contato: string;
-  cidade: string;
+  cidadeId: number;
   dataCadastro: Date;
   criadoPor?: string;
   saldoDevedor: number;
+  nomeCidade: string;
 }

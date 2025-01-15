@@ -41,19 +41,10 @@
             <div class="form-row">
                 <nb-form-field class="form-field">
                     <label for="cidade">Cidade</label>
-                    <nb-select fullWidth id="cidade" placeholder="Selecione a cidade" [(ngModel)]="cliente.cidade" name="cidade" required>
-                        <nb-option value="Goiânia">Goiânia</nb-option>
-                        <nb-option value="Aparecida de Goiânia">Aparecida de Goiânia</nb-option>
-                        <nb-option value="Trindade">Trindade</nb-option>
-                        <nb-option value="Goianira">Goianira</nb-option>
-                        <nb-option value="Senador Canedo">Senador Canedo</nb-option>
-                        <nb-option value="Itaberaí">Itaberaí</nb-option>
-                        <nb-option value="Santa Rosa">Damolândia</nb-option>
-                        <nb-option value="Vianópolis">Vianópolis</nb-option>
-                        <nb-option value="Nerópolis">Nerópolis</nb-option>
-                        <nb-option value="Silvânia">Silvânia</nb-option>
-                        <nb-option value="Araçu">Araçu</nb-option>
-                    </nb-select>
+                    <nb-select for="cidade" fullWidth id="cidade" placeholder="Selecione o tipo" [(ngModel)]="cliente.cidadeId"
+                    name="cidade" required>
+                    <nb-option *ngFor="let opcao of cidades" [value]="opcao.id">{{ opcao.nome }}</nb-option>
+                  </nb-select>
                 </nb-form-field>
             </div>
 

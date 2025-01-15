@@ -12,5 +12,4 @@ public interface ProdutosVendidosService {
 
     void create(ProdutosVendidosDTO produtosVendidosDTO, Long vendaId);
 
-    List<ProdutosVendidosDTO> listar();
 }

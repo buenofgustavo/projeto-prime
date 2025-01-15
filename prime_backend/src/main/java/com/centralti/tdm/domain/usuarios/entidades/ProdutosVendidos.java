@@ -26,8 +26,8 @@ public class ProdutosVendidos {
     @Column(name = "venda_id")
     private Long vendaId;
 
-    @Column(name = "produto")
-    private String produto;
+    @Column(name = "produto_id")
+    private Long produtoId;
 
     @Column(name = "quantidade")
     private Integer quantidade;
@@ -41,7 +41,7 @@ public class ProdutosVendidos {
     public ProdutosVendidos(@Valid ProdutosVendidosDTO produtosVendidosDTO) {
         this.id = produtosVendidosDTO.id();
         this.vendaId = produtosVendidosDTO.vendaId();
-        this.produto = produtosVendidosDTO.produto();
+        this.produtoId = produtosVendidosDTO.produtoId();
         this.quantidade = produtosVendidosDTO.quantidade();
         this.valorUnitario = produtosVendidosDTO.valorUnitario();
         this.valorTotalProduto = produtosVendidosDTO.valorTotalProduto();

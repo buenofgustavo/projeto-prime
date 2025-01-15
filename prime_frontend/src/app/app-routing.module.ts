@@ -10,6 +10,8 @@ import { CadClienteComponent } from './components/cad-cliente/cad-cliente.compon
 import { CadVendasComponent } from './components/cad-vendas/cad-vendas.component';
 import { ListaVendasComponent } from './components/lista-vendas/lista-vendas.component';
 import { ListaClientesComponent } from './components/lista-clientes/lista-clientes.component';
+import { CadCidadesComponent } from './components/cad-cidades/cad-cidades.component';
+import { CadProdutosComponent } from './components/cad-produtos/cad-produtos.component';
 
 const routes: Routes = [
   {
@@ -34,6 +36,8 @@ const routes: Routes = [
       {path: 'cadastrar-usuario', component: CadastrarUsuarioComponent},
       {path: 'cad-cliente', component: CadClienteComponent},
       {path: 'cad-venda', component: CadVendasComponent},
+      {path: 'cad-cidades', component: CadCidadesComponent},
+      {path: 'cad-produtos', component: CadProdutosComponent},
       {path: 'list-vendas', component: ListaVendasComponent},
       {path: 'list-clientes', component: ListaClientesComponent},
     ]

@@ -10,16 +10,17 @@ public record ProdutosVendidosDTO(
 
         Long id,
         Long vendaId,
-        String produto,
+        Long produtoId,
         Integer quantidade,
         Double valorUnitario,
-        Double valorTotalProduto
+        Double valorTotalProduto,
+        String nomeProduto
 
 ) {
     public ProdutosVendidosDTO(ProdutosVendidos produtosVendidos){
         this(
-                produtosVendidos.getId(), produtosVendidos.getVendaId(), produtosVendidos.getProduto(), produtosVendidos.getQuantidade(),
-                produtosVendidos.getValorUnitario(), produtosVendidos.getValorTotalProduto()
+                produtosVendidos.getId(), produtosVendidos.getVendaId(), produtosVendidos.getProdutoId(), produtosVendidos.getQuantidade(),
+                produtosVendidos.getValorUnitario(), produtosVendidos.getValorTotalProduto(), ""
         );
     }
 

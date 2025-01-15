@@ -1,8 +1,9 @@
 export interface ProdutosVendidos {
     id?: number;
     vendaId: number;
-    produto: string;
+    produtoId: number;
     quantidade: number;
     valorUnitario: number;
     valorTotalProduto: number;
+    nomeProduto: string;
   }

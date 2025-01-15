@@ -1,22 +1,19 @@
 package com.centralti.tdm.services.servicesimpl;
 
+import com.centralti.tdm.domain.usuarios.DTO.ClientesDTO;
 import com.centralti.tdm.domain.usuarios.DTO.ProdutosVendidosDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasComProdutosDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
-import com.centralti.tdm.domain.usuarios.entidades.Clientes;
-import com.centralti.tdm.domain.usuarios.entidades.Pagamentos;
-import com.centralti.tdm.domain.usuarios.entidades.ProdutosVendidos;
-import com.centralti.tdm.domain.usuarios.entidades.Vendas;
-import com.centralti.tdm.domain.usuarios.repositories.ClientesRepository;
-import com.centralti.tdm.domain.usuarios.repositories.PagamentosRepository;
-import com.centralti.tdm.domain.usuarios.repositories.ProdutosVendidosRepository;
-import com.centralti.tdm.domain.usuarios.repositories.VendasRepository;
+import com.centralti.tdm.domain.usuarios.entidades.*;
+import com.centralti.tdm.domain.usuarios.repositories.*;
+import com.centralti.tdm.services.servicesinterface.ProdutosService;
 import com.centralti.tdm.services.servicesinterface.ProdutosVendidosService;
 import com.centralti.tdm.services.servicesinterface.VendasComProdutosService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +40,17 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
     @Autowired
     ClientesRepository clientesRepository;
 
+    @Autowired
+    ProdutosRepository produtosRepository;
+
     @Override
+    @Transactional
     public void create(VendasComProdutosDTO vendasComProdutosDTO) {
         Double totalVenda = 0.0;
 
         for (ProdutosVendidosDTO produtoVendidoDTO : vendasComProdutosDTO.produtosVendidosDTO()) {
             totalVenda += produtoVendidoDTO.valorUnitario() * produtoVendidoDTO.quantidade();
         }
-
 
         Long vendaId = vendasService.create(vendasComProdutosDTO.vendasDTO(), totalVenda);
 
@@ -78,7 +78,18 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
             }
 
             List<ProdutosVendidosDTO> produtosVendidosDTO = produtosVendidos.stream()
-                    .map(ProdutosVendidosDTO::new)
+                    .map(produtos -> {
+                        // Obtenha o nome do produto de outra fonte
+                        String nomeProduto = produtosRepository.findById(produtos.getProdutoId())
+                                .map(Produtos::getNome) // Caso o produto seja encontrado
+                                .orElse("Produto Desconhecido"); // Valor padrão caso não seja encontrado
+
+                        // Passe o nome do produto diretamente no construtor do DTO
+                        return new ProdutosVendidosDTO(
+                                produtos.getId(), produtos.getVendaId(), produtos.getProdutoId(), produtos.getQuantidade(),
+                                produtos.getValorUnitario(), produtos.getValorTotalProduto(), nomeProduto
+                        );
+                    })
                     .collect(Collectors.toList());
 
             String nomeCliente = clientesRepository.findById(venda.getClienteId())

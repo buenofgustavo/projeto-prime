@@ -54,6 +54,8 @@ import { ModalVendaComponent } from './components/lista-vendas/modal-venda/modal
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { ListaClientesComponent } from './components/lista-clientes/lista-clientes.component';
 import { ModalClienteComponent } from './components/lista-clientes/modal-cliente/modal-cliente.component';
+import { CadCidadesComponent } from './components/cad-cidades/cad-cidades.component';
+import { CadProdutosComponent } from './components/cad-produtos/cad-produtos.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,8 @@ import { ModalClienteComponent } from './components/lista-clientes/modal-cliente
     ModalVendaComponent,
     ListaClientesComponent,
     ModalClienteComponent,
+    CadCidadesComponent,
+    CadProdutosComponent
   ],
   imports: [
     AppRoutingModule, HttpClientModule, FormsModule, ReactiveFormsModule, BrowserModule, BrowserAnimationsModule, NbEvaIconsModule,

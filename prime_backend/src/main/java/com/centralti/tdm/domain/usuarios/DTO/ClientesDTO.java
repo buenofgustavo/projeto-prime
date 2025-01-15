@@ -11,17 +11,19 @@ public record ClientesDTO(
         String categoria,
         String responsavel,
         String contato,
-        String cidade,
+        Long cidadeId,
         LocalDateTime dataCadastro,
         String criadoPor,
-        Double saldoDevedor
+        Double saldoDevedor,
+        String nomeCidade
+
 
 ) {
     public ClientesDTO(Clientes clientes){
         this(
                 clientes.getId(), clientes.getNome(), clientes.getCategoria(), clientes.getResponsavel(),
-                clientes.getContato(), clientes.getCidade(), clientes.getDataCadastro(),
-                clientes.getCriadoPor(), clientes.getSaldoDevedor()
+                clientes.getContato(), clientes.getCidadeId(), clientes.getDataCadastro(),
+                clientes.getCriadoPor(), clientes.getSaldoDevedor(), ""
         );
     }
 

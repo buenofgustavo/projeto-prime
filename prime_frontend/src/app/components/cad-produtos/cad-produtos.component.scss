@@ -1,0 +1,106 @@
+/* Estilo para o card */
+.form-card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #dbe1f1;
+    color: #333; /* Cor do texto mais escura para garantir boa legibilidade */
+    height: auto; /* O card irá expandir conforme o conteúdo */
+    overflow: hidden; /* Garante que o conteúdo dentro do card não role */
+    margin-bottom: 15px;
+}
+
+/* Cabeçalho do card */
+.form-header {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Container do formulário */
+.step-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Responsividade para os campos do formulário */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+/* Cada campo ocupa metade da largura (para telas maiores) */
+.form-field {
+    flex: 1;
+    min-width: 45%; /* Garante que cada campo ocupe 45% da largura */
+}
+
+/* Ajusta o botão de envio */
+.form-button {
+    font-size: 1.2rem;
+    padding: 12px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Ajustes no input e select para torná-los mais atraentes e uniformes */
+nb-form-field label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+input {
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%; /* Garante que todos os inputs e selects ocupem 100% da largura do contêiner */
+}
+
+input:focus, nb-select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+/* Remover a linha de fundo dos campos nb-select */
+nb-select {
+    border: none;
+    box-shadow: none; /* Remove qualquer sombra que o select possa ter */
+    background-color: transparent; /* Garante que o fundo fique transparente */
+}
+ nb-option {
+    font-size: 1rem; /* Tamanho da fonte das opções */
+}
+
+/* Ajuste adicional para os campos, se necessário */
+nb-form-field {
+    padding: 10px;
+}
+
+/* Manter a borda apenas no foco */
+nb-select:focus {
+    outline: none; /* Remove o contorno padrão */
+    border: 2px solid #007bff; /* Adiciona uma borda azul no foco */
+}
+
+/* Media query para telas pequenas (celulares) */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column; /* Muda para coluna em telas pequenas */
+    }
+
+    /* Garante que os campos ocupem toda a largura disponível em dispositivos móveis */
+    .form-field {
+        min-width: 100%;
+    }
+
+    .form-button {
+        font-size: 1.1rem;
+        padding: 12px;
+    }
+}

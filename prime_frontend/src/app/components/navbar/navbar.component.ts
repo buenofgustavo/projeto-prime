@@ -38,6 +38,18 @@ export class NavbarComponent {
       hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
     },
     {
+      title: 'Cadastrar Cidades',
+      icon: "car-outline",
+      link: "/cad-cidades",
+      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
+    },
+    {
+      title: 'Cadastrar Produtos',
+      icon: "car-outline",
+      link: "/cad-produtos",
+      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
+    },
+    {
       title: 'Lista Vendas',
       icon: "file-text-outline",
       link: "/list-vendas",

@@ -51,12 +51,11 @@
       </div>
 
       <div class="form-row">
-        <!-- Produto -->
         <div class="form-field">
           <label for="produto">Produto</label>
-          <nb-select for="produto" fullWidth id="produto" placeholder="Selecione o tipo" [(ngModel)]="produto.produto"
+          <nb-select for="produto" fullWidth id="produto" placeholder="Selecione o tipo" [(ngModel)]="produto.produtoId"
             name="produto" required>
-            <nb-option *ngFor="let opcao of produtosOpcoes" [value]="opcao.valor">{{ opcao.descricao }}</nb-option>
+            <nb-option *ngFor="let opcao of produtos" [value]="opcao.id">{{ opcao.nome }}</nb-option>
           </nb-select>
         </div>
 
@@ -103,7 +102,7 @@
           <tbody>
             <tr *ngFor="let p of vendas.produtosVendidosDTO; let i = index">
               <td>{{ i + 1 }}</td>
-              <td>{{ p.produto }}</td>
+              <td>{{ p.nomeProduto }}</td>
               <td>{{ p.quantidade }}</td>
               <td>{{ p.valorUnitario | currency: 'BRL' }}</td>
               <td>{{ p.valorTotalProduto | currency: 'BRL' }}</td>

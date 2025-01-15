@@ -15,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -87,6 +88,7 @@ public class VendasServiceImpl implements VendasService {
     }
 
     @Override
+    @Transactional
     public void pagar(VendasDTO vendasDTO) {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -150,7 +152,9 @@ public class VendasServiceImpl implements VendasService {
             SaldoDevedor(vendas.getClienteId());
         }
     }
+
     @Override
+    @Transactional
     public void pagarSaldoDevedor(VendasDTO vendasDTO, Double valorPago) {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -199,6 +203,7 @@ public class VendasServiceImpl implements VendasService {
     }
 
     @Override
+    @Transactional
     public void SaldoDevedor(Long idCliente){
         List<Vendas> vendas = vendasRepository.findByClienteId(idCliente);
         Optional<Clientes> clienteOptional = clientesRepository.findById(idCliente);

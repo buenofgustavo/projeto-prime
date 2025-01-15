@@ -2,12 +2,15 @@ package com.centralti.tdm.services.servicesimpl;
 
 import com.centralti.tdm.domain.usuarios.DTO.ClientesDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
+import com.centralti.tdm.domain.usuarios.entidades.Cidades;
 import com.centralti.tdm.domain.usuarios.entidades.Clientes;
 import com.centralti.tdm.domain.usuarios.entidades.Vendas;
+import com.centralti.tdm.domain.usuarios.repositories.CidadesRepository;
 import com.centralti.tdm.domain.usuarios.repositories.ClientesRepository;
 import com.centralti.tdm.domain.usuarios.repositories.VendasRepository;
 import com.centralti.tdm.services.servicesinterface.ClientesService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,9 @@ public class ClientesServiceImpl implements ClientesService {
     VendasRepository vendasRepository;
 
     @Autowired
+    CidadesRepository cidadesRepository;
+
+    @Autowired
     VendasService vendasService;
 
     @Override
@@ -36,19 +42,26 @@ public class ClientesServiceImpl implements ClientesService {
 
         Optional<Clientes> optionalClientes = clientesRepository.findById(clientesDTO.id());
         Clientes clientes;
-        if (optionalClientes.isPresent()) {
-             clientes = optionalClientes.get();
-             clientes.setCidade(clientesDTO.cidade());
-             clientes.setContato(clientesDTO.contato());
-             clientes.setNome(clientesDTO.nome());
-             clientes.setCategoria(clientesDTO.categoria());
-             clientes.setResponsavel(clientesDTO.responsavel());
+
+        Optional<Cidades> optionalCidades = cidadesRepository.findById(clientesDTO.cidadeId());
+        if(optionalCidades.isPresent()){
+            if (optionalClientes.isPresent()) {
+                clientes = optionalClientes.get();
+                clientes.setCidadeId(clientesDTO.cidadeId());
+                clientes.setContato(clientesDTO.contato());
+                clientes.setNome(clientesDTO.nome());
+                clientes.setCategoria(clientesDTO.categoria());
+                clientes.setResponsavel(clientesDTO.responsavel());
+            } else {
+                clientes = new Clientes(clientesDTO);
+                clientes.setDataCadastro(dataHoraAtual);
+                clientes.setCriadoPor(emailUsuario);
+            }
+            clientesRepository.save(clientes);
         } else {
-            clientes = new Clientes(clientesDTO);
-            clientes.setDataCadastro(dataHoraAtual);
-            clientes.setCriadoPor(emailUsuario);
+            throw new EntityNotFoundException("Cidade não encontrada");
         }
-        clientesRepository.save(clientes);
+
     }
 
     @Override
@@ -87,7 +100,21 @@ public class ClientesServiceImpl implements ClientesService {
     public List<ClientesDTO> listar() {
         List<Clientes> allClientes = clientesRepository.findAll();
         return allClientes.stream()
-                .map(ClientesDTO::new)
+
+                .map(cliente -> {
+                    // Obtenha o nome do cliente de outra fonte
+                    String nomeCidade = cidadesRepository.findById(cliente.getCidadeId())
+                            .map(Cidades::getNome) // Caso a cidade seja encontrado
+                            .orElse("Cidade Desconhecida"); // Valor padrão caso não seja encontrado
+
+                    // Passe o nomeCliente diretamente no construtor do DTO
+                    return new ClientesDTO(
+                            cliente.getId(), cliente.getNome(), cliente.getCategoria(), cliente.getResponsavel(),
+                            cliente.getContato(), cliente.getCidadeId(), cliente.getDataCadastro(),
+                            cliente.getCriadoPor(), cliente.getSaldoDevedor(), nomeCidade
+                    );
+                })
+
                 .collect(Collectors.toList());
     }
 
