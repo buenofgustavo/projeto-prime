@@ -2,9 +2,11 @@ package com.centralti.tdm.services.servicesimpl;
 
 import com.centralti.tdm.domain.usuarios.DTO.ClientesDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
+import com.centralti.tdm.domain.usuarios.entidades.Categorias;
 import com.centralti.tdm.domain.usuarios.entidades.Cidades;
 import com.centralti.tdm.domain.usuarios.entidades.Clientes;
 import com.centralti.tdm.domain.usuarios.entidades.Vendas;
+import com.centralti.tdm.domain.usuarios.repositories.CategoriasRepository;
 import com.centralti.tdm.domain.usuarios.repositories.CidadesRepository;
 import com.centralti.tdm.domain.usuarios.repositories.ClientesRepository;
 import com.centralti.tdm.domain.usuarios.repositories.VendasRepository;
@@ -33,6 +35,9 @@ public class ClientesServiceImpl implements ClientesService {
     CidadesRepository cidadesRepository;
 
     @Autowired
+    CategoriasRepository categoriasRepository;
+
+    @Autowired
     VendasService vendasService;
 
     @Override
@@ -44,13 +49,14 @@ public class ClientesServiceImpl implements ClientesService {
         Clientes clientes;
 
         Optional<Cidades> optionalCidades = cidadesRepository.findById(clientesDTO.cidadeId());
-        if(optionalCidades.isPresent()){
+        Optional<Categorias> optionalCategorias = categoriasRepository.findById(clientesDTO.categoriaId());
+        if(optionalCidades.isPresent() && optionalCategorias.isPresent()) {
             if (optionalClientes.isPresent()) {
                 clientes = optionalClientes.get();
                 clientes.setCidadeId(clientesDTO.cidadeId());
                 clientes.setContato(clientesDTO.contato());
                 clientes.setNome(clientesDTO.nome());
-                clientes.setCategoria(clientesDTO.categoria());
+                clientes.setCategoriaId(clientesDTO.categoriaId());
                 clientes.setResponsavel(clientesDTO.responsavel());
             } else {
                 clientes = new Clientes(clientesDTO);
@@ -59,7 +65,7 @@ public class ClientesServiceImpl implements ClientesService {
             }
             clientesRepository.save(clientes);
         } else {
-            throw new EntityNotFoundException("Cidade não encontrada");
+            throw new EntityNotFoundException("Cidade ou categoria não encontrada");
         }
 
     }
@@ -102,16 +108,18 @@ public class ClientesServiceImpl implements ClientesService {
         return allClientes.stream()
 
                 .map(cliente -> {
-                    // Obtenha o nome do cliente de outra fonte
                     String nomeCidade = cidadesRepository.findById(cliente.getCidadeId())
                             .map(Cidades::getNome) // Caso a cidade seja encontrado
                             .orElse("Cidade Desconhecida"); // Valor padrão caso não seja encontrado
 
-                    // Passe o nomeCliente diretamente no construtor do DTO
+                    String nomeCategoria = categoriasRepository.findById(cliente.getCategoriaId())
+                            .map(Categorias::getNome) // Caso a cidade seja encontrado
+                            .orElse("Categoria Desconhecida"); // Valor padrão caso não seja encontrado
+
                     return new ClientesDTO(
-                            cliente.getId(), cliente.getNome(), cliente.getCategoria(), cliente.getResponsavel(),
+                            cliente.getId(), cliente.getNome(), cliente.getCategoriaId(), cliente.getResponsavel(),
                             cliente.getContato(), cliente.getCidadeId(), cliente.getDataCadastro(),
-                            cliente.getCriadoPor(), cliente.getSaldoDevedor(), nomeCidade
+                            cliente.getCriadoPor(), cliente.getSaldoDevedor(), nomeCidade, nomeCategoria
                     );
                 })
 

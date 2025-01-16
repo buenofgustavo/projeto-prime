@@ -56,6 +56,8 @@ import { ListaClientesComponent } from './components/lista-clientes/lista-client
 import { ModalClienteComponent } from './components/lista-clientes/modal-cliente/modal-cliente.component';
 import { CadCidadesComponent } from './components/cad-cidades/cad-cidades.component';
 import { CadProdutosComponent } from './components/cad-produtos/cad-produtos.component';
+import { CadVendedoresComponent } from './components/cad-vendedores/cad-vendedores.component';
+import { CadCategoriasComponent } from './components/cad-categorias/cad-categorias.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +73,9 @@ import { CadProdutosComponent } from './components/cad-produtos/cad-produtos.com
     ListaClientesComponent,
     ModalClienteComponent,
     CadCidadesComponent,
-    CadProdutosComponent
+    CadProdutosComponent,
+    CadVendedoresComponent,
+    CadCategoriasComponent
   ],
   imports: [
     AppRoutingModule, HttpClientModule, FormsModule, ReactiveFormsModule, BrowserModule, BrowserAnimationsModule, NbEvaIconsModule,

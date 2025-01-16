@@ -9,7 +9,7 @@ public record VendasDTO(
 
         Long id,
         Long clienteId,
-        String motorista,
+        Long vendedorId,
         Double valorTotalVenda,
         Double valorPago,
         String status,
@@ -20,15 +20,16 @@ public record VendasDTO(
         String atualizadoPor,
         Double valorPendente,
         String observacao,
-        String nomeCliente
+        String nomeCliente,
+        String nomeVendedor
 
 ) {
     public VendasDTO(Vendas vendas){
         this(
-                vendas.getId(), vendas.getClienteId(), vendas.getMotorista(), vendas.getValorTotalVenda(),
+                vendas.getId(), vendas.getClienteId(), vendas.getVendedorId(), vendas.getValorTotalVenda(),
                 vendas.getValorPago(), vendas.getStatus(), vendas.getDataUltimoPagamento(),
                 vendas.getDataCadastro(), vendas.getDataVenda(), vendas.getCriadoPor(),
-                vendas.getAtualizadoPor(), vendas.getValorPendente(), vendas.getObservacao(), ""
+                vendas.getAtualizadoPor(), vendas.getValorPendente(), vendas.getObservacao(), "", ""
         );
     }
 

@@ -26,30 +26,17 @@
 
                 <nb-form-field class="form-field">
                     <label for="cidade">Cidade</label>
-                    <nb-select [disabled]=" data.acao != 'editar' " fullWidth id="cidade"
-                        placeholder="Selecione a cidade" [(ngModel)]="data.clientes.cidadeId" name="cidade" required>
-                        <nb-option value=1>Goiânia</nb-option>
-                        <nb-option value=2>Aparecida de Goiânia</nb-option>
-                        <nb-option value=3>Trindade</nb-option>
-                        <nb-option value=4>Goianira</nb-option>
-                        <nb-option value=5>Senador Canedo</nb-option>
-                        <nb-option value=6>Itaberaí</nb-option>
-                        <nb-option value=7>Damolândia</nb-option>
-                        <nb-option value=8>Vianópolis</nb-option>
-                        <nb-option value=9>Nerópolis</nb-option>
-                        <nb-option value=10>Silvânia</nb-option>
-                        <nb-option value=11>Araçu</nb-option>
+                    <nb-select [disabled]=" data.acao != 'editar' " for="cidade" fullWidth id="cidade"
+                        placeholder="Selecione o tipo" [(ngModel)]="data.clientes.cidadeId" name="cidade" required>
+                        <nb-option *ngFor="let opcao of cidades" [value]="opcao.id">{{ opcao.nome }}</nb-option>
                     </nb-select>
                 </nb-form-field>
 
                 <nb-form-field class="form-field">
                     <label for="categoria">Categoria</label>
-                    <nb-select [disabled]=" data.acao != 'editar' " fullWidth id="categoria"
-                        placeholder="Selecione o tipo" [(ngModel)]="data.clientes.categoria" name="categoria" required>
-                        <nb-option value="Indústria">Indústria</nb-option>
-                        <nb-option value="Torneadora">Torneadora</nb-option>
-                        <nb-option value="Hospital">Hospital</nb-option>
-                        <nb-option value="Móveis">Móveis</nb-option>
+                    <nb-select [disabled]=" data.acao != 'editar' " for="categoria" fullWidth id="categoria"
+                        placeholder="Selecione o tipo" [(ngModel)]="data.clientes.categoriaId" name="cidade" required>
+                        <nb-option *ngFor="let opcao of categorias" [value]="opcao.id">{{ opcao.nome }}</nb-option>
                     </nb-select>
                 </nb-form-field>
 

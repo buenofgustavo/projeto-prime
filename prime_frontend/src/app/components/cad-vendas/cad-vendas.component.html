@@ -35,15 +35,13 @@
 
       <div class="form-row">
 
-        <!-- Motorista -->
+        <!-- Vendedores -->
         <div class="form-field">
-          <label for="vendasDTO.motorista">Motorista</label>
-          <nb-select for="vendasDTO.motorista" fullWidth id="vendasDTO.motorista" placeholder="Selecione o motorista"
-            [(ngModel)]="vendas.vendasDTO.motorista" name="vendasDTO.motorista" required>
-            <nb-option value="Francisco">Francisco</nb-option>
-            <nb-option value="Claúdio">Claúdio</nb-option>
-            <nb-option value="Marcos">Marcos</nb-option>
-          </nb-select>
+          <label for="vendasDTO.vendedores">Vendedores</label>
+          <nb-select for="vendedores" fullWidth id="vendedores" placeholder="Selecione o tipo" [(ngModel)]="vendas.vendasDTO.vendedorId"
+          name="vendedores" required>
+          <nb-option *ngFor="let opcao of vendedores" [value]="opcao.id">{{ opcao.nome }}</nb-option>
+        </nb-select>
         </div>
 
 

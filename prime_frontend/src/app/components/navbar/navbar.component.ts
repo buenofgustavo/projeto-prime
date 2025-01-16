@@ -50,6 +50,18 @@ export class NavbarComponent {
       hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
     },
     {
+      title: 'Cadastrar Vendedores',
+      icon: "car-outline",
+      link: "/cad-vendedores",
+      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
+    },
+    {
+      title: 'Cadastrar Categorias',
+      icon: "car-outline",
+      link: "/cad-categorias",
+      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
+    },
+    {
       title: 'Lista Vendas',
       icon: "file-text-outline",
       link: "/list-vendas",

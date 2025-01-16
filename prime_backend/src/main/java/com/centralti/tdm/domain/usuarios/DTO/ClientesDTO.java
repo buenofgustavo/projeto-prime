@@ -8,22 +8,23 @@ public record ClientesDTO(
 
         Long id,
         String nome,
-        String categoria,
+        Long categoriaId,
         String responsavel,
         String contato,
         Long cidadeId,
         LocalDateTime dataCadastro,
         String criadoPor,
         Double saldoDevedor,
-        String nomeCidade
+        String nomeCidade,
+        String nomeCategoria
 
 
 ) {
     public ClientesDTO(Clientes clientes){
         this(
-                clientes.getId(), clientes.getNome(), clientes.getCategoria(), clientes.getResponsavel(),
+                clientes.getId(), clientes.getNome(), clientes.getCategoriaId(), clientes.getResponsavel(),
                 clientes.getContato(), clientes.getCidadeId(), clientes.getDataCadastro(),
-                clientes.getCriadoPor(), clientes.getSaldoDevedor(), ""
+                clientes.getCriadoPor(), clientes.getSaldoDevedor(), "", ""
         );
     }
 

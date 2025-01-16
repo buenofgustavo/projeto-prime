@@ -1,8 +1,7 @@
 export interface Vendas {
   id?: number;
   clienteId: number;
-  nomeCliente: string;
-  motorista: string,
+  vendedorId: number,
   valorTotalVenda: number;
   valorPago: number;
   status: string;
@@ -13,4 +12,6 @@ export interface Vendas {
   atualizadoPor?: string;
   valorPendente: number;
   observacao: string;
+  nomeCliente: string;
+  nomeVendedor: string;
 }

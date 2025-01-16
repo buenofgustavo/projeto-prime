@@ -2,13 +2,8 @@ package com.centralti.tdm.services.servicesimpl;
 
 import com.centralti.tdm.domain.usuarios.DTO.PagamentosDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
-import com.centralti.tdm.domain.usuarios.entidades.Clientes;
-import com.centralti.tdm.domain.usuarios.entidades.Pagamentos;
-import com.centralti.tdm.domain.usuarios.entidades.Vendas;
-import com.centralti.tdm.domain.usuarios.repositories.ClientesRepository;
-import com.centralti.tdm.domain.usuarios.repositories.PagamentosRepository;
-import com.centralti.tdm.domain.usuarios.repositories.ProdutosVendidosRepository;
-import com.centralti.tdm.domain.usuarios.repositories.VendasRepository;
+import com.centralti.tdm.domain.usuarios.entidades.*;
+import com.centralti.tdm.domain.usuarios.repositories.*;
 import com.centralti.tdm.services.servicesinterface.PagamentosService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
 import jakarta.persistence.EntityNotFoundException;
@@ -38,6 +33,9 @@ public class VendasServiceImpl implements VendasService {
     PagamentosRepository pagamentosRepository;
 
     @Autowired
+    VendedoresRepository vendedoresRepository;
+
+    @Autowired
     ProdutosVendidosRepository produtosVendidosRepository;
 
     @Override
@@ -47,44 +45,53 @@ public class VendasServiceImpl implements VendasService {
 
         Vendas vendas;
 
-        if (vendasDTO.id() != null && vendasDTO.id() != 0 ) {
+        Optional<Vendedores> optionalVendedores = vendedoresRepository.findById(vendasDTO.vendedorId());
+        if(optionalVendedores.isPresent()) {
 
-            // Buscar a venda existente para atualização
-            vendas = vendasRepository.findById(vendasDTO.id())
-                    .orElseThrow(() -> new EntityNotFoundException("Venda não encontrada com o ID: " + vendasDTO.id()));
-            vendas.setDataVenda(vendasDTO.dataVenda());
-            vendas.setValorPago(vendasDTO.valorPago());
-            vendas.setAtualizadoPor(emailUsuario);
-            vendas.setObservacao(vendas.getObservacao());
+            if (vendasDTO.id() != null && vendasDTO.id() != 0 ) {
+
+                // Buscar a venda existente para atualização
+                vendas = vendasRepository.findById(vendasDTO.id())
+                        .orElseThrow(() -> new EntityNotFoundException("Venda não encontrada com o ID: " + vendasDTO.id()));
+                vendas.setDataVenda(vendasDTO.dataVenda());
+                vendas.setValorPago(vendasDTO.valorPago());
+                vendas.setAtualizadoPor(emailUsuario);
+                vendas.setObservacao(vendas.getObservacao());
+
+            } else {
+                // Criar nova venda
+                vendas = new Vendas(vendasDTO);
+
+                vendas.setDataCadastro(dataHoraAtual);
+                vendas.setCriadoPor(emailUsuario);
+            }
+            vendas.setValorTotalVenda(valorTotalVenda);
+            Double valorRestante = vendas.getValorTotalVenda() - vendas.getValorPago();
+            vendas.setValorPendente(valorRestante);
+            if (vendas.getValorPago().equals(vendas.getValorTotalVenda())){
+                vendas.setStatus("Pago");
+            } else if (vendas.getValorPago() < vendas.getValorTotalVenda() && vendas.getValorPago() > 0) {
+                vendas.setStatus("Pendente - Parcial");
+            } else if (vendas.getValorPago() > vendas.getValorTotalVenda()){
+                vendas.setStatus("Pago a mais");
+            }
+            else {
+                vendas.setStatus("Pendente");
+            }
+            if(vendasDTO.valorPago() != 0){
+                vendas.setDataUltimoPagamento(dataHoraAtual);
+            }
+            vendas = vendasRepository.save(vendas); // O ID será atribuído automaticamente após o save
+
+            SaldoDevedor(vendas.getClienteId());
+
+            return vendas.getId();
+
 
         } else {
-            // Criar nova venda
-            vendas = new Vendas(vendasDTO);
+            throw new EntityNotFoundException("Vendedor não encontrado");
+        }
 
-            vendas.setDataCadastro(dataHoraAtual);
-            vendas.setCriadoPor(emailUsuario);
-        }
-        vendas.setValorTotalVenda(valorTotalVenda);
-        Double valorRestante = vendas.getValorTotalVenda() - vendas.getValorPago();
-        vendas.setValorPendente(valorRestante);
-        if (vendas.getValorPago().equals(vendas.getValorTotalVenda())){
-            vendas.setStatus("Pago");
-        } else if (vendas.getValorPago() < vendas.getValorTotalVenda() && vendas.getValorPago() > 0) {
-            vendas.setStatus("Pendente - Parcial");
-        } else if (vendas.getValorPago() > vendas.getValorTotalVenda()){
-            vendas.setStatus("Pago a mais");
-        }
-          else {
-            vendas.setStatus("Pendente");
-        }
-        if(vendasDTO.valorPago() != 0){
-            vendas.setDataUltimoPagamento(dataHoraAtual);
-        }
-        vendas = vendasRepository.save(vendas); // O ID será atribuído automaticamente após o save
-
-        SaldoDevedor(vendas.getClienteId());
-
-        return vendas.getId();
     }
 
     @Override
@@ -236,12 +243,17 @@ public class VendasServiceImpl implements VendasService {
                             .map(Clientes::getNome) // Caso o cliente seja encontrado
                             .orElse("Cliente Desconhecido"); // Valor padrão caso não seja encontrado
 
+                    String nomeVendedor = vendedoresRepository.findById(venda.getVendedorId())
+                            .map(Vendedores::getNome) // Caso o cliente seja encontrado
+                            .orElse("Vendedor Desconhecido"); // Valor padrão caso não seja encontrado
+
                     // Passe o nomeCliente diretamente no construtor do DTO
                     return new VendasDTO(
-                            venda.getId(), venda.getClienteId(), venda.getMotorista(), venda.getValorTotalVenda(),
+                            venda.getId(), venda.getClienteId(), venda.getVendedorId(), venda.getValorTotalVenda(),
                             venda.getValorPago(), venda.getStatus(), venda.getDataUltimoPagamento(),
                             venda.getDataCadastro(), venda.getDataVenda(), venda.getCriadoPor(),
-                            venda.getAtualizadoPor(), venda.getValorPendente(), venda.getObservacao(), nomeCliente
+                            venda.getAtualizadoPor(), venda.getValorPendente(),
+                            venda.getObservacao(), nomeCliente, nomeVendedor
                     );
                 })
                 .collect(Collectors.toList());

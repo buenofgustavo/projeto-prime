@@ -1,9 +1,13 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NbToastrService } from '@nebular/theme';
+import { Categorias } from 'src/app/interface/categorias';
+import { Cidades } from 'src/app/interface/cidades';
 import { Clientes } from 'src/app/interface/clientes';
 import { VendasComProdutosDTO } from 'src/app/interface/vendasComProdutos';
+import { CategoriasService } from 'src/app/services/categorias/categorias.service';
+import { CidadesService } from 'src/app/services/cidades/cidades.service';
 import { ClientesService } from 'src/app/services/clientes/clientes.service';
 import { VendasService } from 'src/app/services/vendas/vendas.service';
 
@@ -12,15 +16,36 @@ import { VendasService } from 'src/app/services/vendas/vendas.service';
   templateUrl: './modal-cliente.component.html',
   styleUrls: ['./modal-cliente.component.scss']
 })
-export class ModalClienteComponent {
+export class ModalClienteComponent implements OnInit {
 
   telefoneMask = ['(', /[1-9]/, /\d/, ')', ' ', /\d/, ' ', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
 
   constructor(private dialogRef: MatDialogRef<ModalClienteComponent>,
     private toastrService: NbToastrService,
     private clientesService: ClientesService,
+    private categoriasService: CategoriasService,
+    private cidadesService: CidadesService,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: { clientes: Clientes, acao: string }) {
+  }
+
+  ngOnInit() {
+    this.getCidades();
+    this.getCategorias()
+  }
+
+  cidades: Cidades[] = [];
+  getCidades(): void {
+    this.cidadesService.get().subscribe(cidades => {
+      this.cidades = cidades;
+    });
+  }
+
+  categorias: Categorias[] = [];
+  getCategorias(): void {
+    this.categoriasService.get().subscribe(categorias => {
+      this.categorias = categorias;
+    });
   }
 
   valorASerPago: number = 0;
@@ -29,7 +54,7 @@ export class ModalClienteComponent {
 
     if (this.valorASerPago > this.data.clientes.saldoDevedor) {
       this.toastrService.danger(`Valor pago deve ser menor que R$${this.data.clientes.saldoDevedor}`, "Danger");
-    } 
+    }
     else {
       this.clientesService.pagarSaldoDevedor(this.data.clientes.id, this.valorASerPago).subscribe(
         response => {

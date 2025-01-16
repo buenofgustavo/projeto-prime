@@ -14,12 +14,10 @@
                 <!-- Categoria -->
                 <nb-form-field class="form-field">
                     <label for="categoria">Categoria</label>
-                    <nb-select fullWidth id="categoria" placeholder="Selecione o tipo" [(ngModel)]="cliente.categoria" name="categoria" required>
-                        <nb-option value="Indústria">Indústria</nb-option>
-                        <nb-option value="Torneadora">Torneadora</nb-option>
-                        <nb-option value="Hospital">Hospital</nb-option>
-                        <nb-option value="Móveis">Móveis</nb-option>
-                    </nb-select>
+                    <nb-select for="categoria" fullWidth id="categoria" placeholder="Selecione o tipo" [(ngModel)]="cliente.categoriaId"
+                    name="cidade" required>
+                    <nb-option *ngFor="let opcao of categorias" [value]="opcao.id">{{ opcao.nome }}</nb-option>
+                  </nb-select>
                 </nb-form-field>
             </div>
 

@@ -12,6 +12,8 @@ import { ListaVendasComponent } from './components/lista-vendas/lista-vendas.com
 import { ListaClientesComponent } from './components/lista-clientes/lista-clientes.component';
 import { CadCidadesComponent } from './components/cad-cidades/cad-cidades.component';
 import { CadProdutosComponent } from './components/cad-produtos/cad-produtos.component';
+import { CadVendedoresComponent } from './components/cad-vendedores/cad-vendedores.component';
+import { CadCategoriasComponent } from './components/cad-categorias/cad-categorias.component';
 
 const routes: Routes = [
   {
@@ -38,6 +40,8 @@ const routes: Routes = [
       {path: 'cad-venda', component: CadVendasComponent},
       {path: 'cad-cidades', component: CadCidadesComponent},
       {path: 'cad-produtos', component: CadProdutosComponent},
+      {path: 'cad-vendedores', component: CadVendedoresComponent},
+      {path: 'cad-categorias', component: CadCategoriasComponent},
       {path: 'list-vendas', component: ListaVendasComponent},
       {path: 'list-clientes', component: ListaClientesComponent},
     ]

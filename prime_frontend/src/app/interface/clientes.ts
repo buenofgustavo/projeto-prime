@@ -1,7 +1,7 @@
 export interface Clientes {
   id?: number;
   nome: string;
-  categoria: string;
+  categoriaId: number;
   responsavel: string;
   contato: string;
   cidadeId: number;
@@ -9,4 +9,5 @@ export interface Clientes {
   criadoPor?: string;
   saldoDevedor: number;
   nomeCidade: string;
+  nomeCategoria: string;
 }

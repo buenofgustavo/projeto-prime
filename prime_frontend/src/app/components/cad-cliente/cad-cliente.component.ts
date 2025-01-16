@@ -6,6 +6,8 @@ import { ClientesService } from 'src/app/services/clientes/clientes.service';
 import { DatePipe } from '@angular/common';
 import { Cidades } from 'src/app/interface/cidades';
 import { CidadesService } from 'src/app/services/cidades/cidades.service';
+import { Categorias } from 'src/app/interface/categorias';
+import { CategoriasService } from 'src/app/services/categorias/categorias.service';
 
 @Component({
   selector: 'app-cad-cliente',
@@ -18,13 +20,14 @@ export class CadClienteComponent implements OnInit {
   cliente: Clientes = {
     id: 0,
     nome: '',
-    categoria: '',
+    categoriaId: 0,
     responsavel: '',
     contato: '',
     cidadeId: 0,
     dataCadastro: new Date(),
     saldoDevedor: 0,
-    nomeCidade: ""
+    nomeCidade: "",
+    nomeCategoria: ""
   }
 
   telefoneMask = ['(', /[1-9]/, /\d/, ')', ' ', /\d/, ' ', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
@@ -35,12 +38,13 @@ export class CadClienteComponent implements OnInit {
   
   ngOnInit() {
     this.getCidades();
+    this.getCategorias()
   }
 
   constructor(
     private clientesService: ClientesService,
     private cidadesService: CidadesService,
-    private datePipe: DatePipe,
+    private categoriasService: CategoriasService,
     private toastrService: NbToastrService, private router: Router,
     private sidebarService: NbSidebarService
   ) {
@@ -51,6 +55,13 @@ export class CadClienteComponent implements OnInit {
   getCidades(): void {
     this.cidadesService.get().subscribe(cidades => {
       this.cidades = cidades;
+    });
+  }
+
+  categorias: Categorias[] = [];
+  getCategorias(): void {
+    this.categoriasService.get().subscribe(categorias => {
+      this.categorias = categorias;
     });
   }
 

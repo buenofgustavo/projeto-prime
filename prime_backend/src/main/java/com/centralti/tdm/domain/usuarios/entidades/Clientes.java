@@ -23,8 +23,8 @@ public class Clientes {
     @Column(name = "nome")
     private String nome;
 
-    @Column(name = "categoria")
-    private String categoria;
+    @Column(name = "categoria_id")
+    private Long categoriaId;
 
     @Column(name = "responsavel")
     private String responsavel;
@@ -48,7 +48,7 @@ public class Clientes {
     public Clientes(@Valid ClientesDTO clientesDTO) {
         this.id = clientesDTO.id();
         this.nome = clientesDTO.nome();
-        this.categoria = clientesDTO.categoria();
+        this.categoriaId = clientesDTO.categoriaId()    ;
         this.responsavel = clientesDTO.responsavel();
         this.contato = clientesDTO.contato();
         this.cidadeId = clientesDTO.cidadeId();

@@ -6,16 +6,20 @@ import { ClientesService } from 'src/app/services/clientes/clientes.service';
 import { DatePipe } from '@angular/common';
 import { Cidades } from 'src/app/interface/cidades';
 import { CidadesService } from 'src/app/services/cidades/cidades.service';
+import { VendedoresService } from 'src/app/services/vendedores/vendedores.service';
+import { Vendedores } from 'src/app/interface/vendedores';
+import { Categorias } from 'src/app/interface/categorias';
+import { CategoriasService } from 'src/app/services/categorias/categorias.service';
 
 @Component({
-  selector: 'app-cad-cidades',
-  templateUrl: './cad-cidades.component.html',
-  styleUrls: ['./cad-cidades.component.scss'],
+  selector: 'app-cad-categorias',
+  templateUrl: './cad-categorias.component.html',
+  styleUrls: ['./cad-categorias.component.scss'],
   providers: [DatePipe]
 })
-export class CadCidadesComponent {
+export class CadCategoriasComponent {
 
-  cidades: Cidades = {
+  categorias: Categorias = {
     id: 0,
     nome: '',
     dataCadastro: new Date(),
@@ -28,7 +32,7 @@ export class CadCidadesComponent {
   }
 
   constructor(
-    private cidadesService: CidadesService,
+    private categoriasService: CategoriasService,
     private datePipe: DatePipe,
     private toastrService: NbToastrService, private router: Router,
     private sidebarService: NbSidebarService
@@ -37,24 +41,24 @@ export class CadCidadesComponent {
   }
 
   create() {
-    this.cidadesService.cadastrar(this.cidades).subscribe(
+    this.categoriasService.cadastrar(this.categorias).subscribe(
       response => {
-        this.toastrService.success("Cidade cadastrada com sucesso!", "Sucesso");
+        this.toastrService.success("Categoria cadastrada com sucesso!", "Sucesso");
         setTimeout(() => {
           this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/cad-cidades']);
+            this.router.navigate(['/cad-categorias']);
           });
         }, 1000);
 
       },
       (error) => {
-        console.log('Erro ao cadastrar cidade:', error);
+        console.log('Erro ao cadastrar categoria:', error);
         if (error.status === 403) {
           setTimeout(() => {
             location.reload(); // Recarrega a página após 2 segundos
           }, 2000);
         } else {
-          this.toastrService.danger('Erro ao cadastrar cidade.', 'Erro');
+          this.toastrService.danger('Erro ao cadastrar categoria.', 'Erro');
         }
 
       }

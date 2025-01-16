@@ -24,8 +24,8 @@ public class Vendas {
     @Column(name = "cliente_id")
     private Long clienteId;
 
-    @Column(name = "motorista")
-    private String motorista;
+    @Column(name = "vendedor_id")
+    private Long vendedorId;
 
     @Column(name = "valor_total_venda")
     private Double valorTotalVenda;
@@ -60,7 +60,7 @@ public class Vendas {
     public Vendas(@Valid VendasDTO vendasDTO) {
         this.id = vendasDTO.id();
         this.clienteId = vendasDTO.clienteId();
-        this.motorista = vendasDTO.motorista();
+        this.vendedorId = vendasDTO.vendedorId();
         this.valorTotalVenda = vendasDTO.valorTotalVenda();
         this.valorPago = vendasDTO.valorPago();
         this.status = vendasDTO.status();

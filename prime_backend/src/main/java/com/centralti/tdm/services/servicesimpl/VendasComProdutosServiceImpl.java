@@ -43,6 +43,9 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
     @Autowired
     ProdutosRepository produtosRepository;
 
+    @Autowired
+    VendedoresRepository vendedoresRepository;
+
     @Override
     @Transactional
     public void create(VendasComProdutosDTO vendasComProdutosDTO) {
@@ -96,12 +99,16 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
                     .map(Clientes::getNome)
                     .orElse("Cliente Desconhecido");
 
+            String nomeVendedor = vendedoresRepository.findById(venda.getVendedorId())
+                    .map(Vendedores::getNome) // Caso o cliente seja encontrado
+                    .orElse("Vendedor Desconhecido"); // Valor padrão caso não seja encontrado
+
             VendasComProdutosDTO vendasComProdutosDTO = new VendasComProdutosDTO(
                     new VendasDTO(
-                            venda.getId(), venda.getClienteId(), venda.getMotorista(), venda.getValorTotalVenda(),
+                            venda.getId(), venda.getClienteId(), venda.getVendedorId(), venda.getValorTotalVenda(),
                             venda.getValorPago(), venda.getStatus(), venda.getDataUltimoPagamento(),
                             venda.getDataCadastro(), venda.getDataVenda(), venda.getCriadoPor(),
-                            venda.getAtualizadoPor(), venda.getValorPendente(), venda.getObservacao(), nomeCliente
+                            venda.getAtualizadoPor(), venda.getValorPendente(), venda.getObservacao(), nomeCliente, nomeVendedor
                     ),
                     produtosVendidosDTO
             );

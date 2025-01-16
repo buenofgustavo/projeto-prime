@@ -8,9 +8,11 @@ import { Clientes } from 'src/app/interface/clientes';
 import { Produtos } from 'src/app/interface/produtos';
 import { ProdutosVendidos } from 'src/app/interface/produtosVendidos';
 import { VendasComProdutosDTO } from 'src/app/interface/vendasComProdutos';
+import { Vendedores } from 'src/app/interface/vendedores';
 import { ClientesService } from 'src/app/services/clientes/clientes.service';
 import { ProdutosService } from 'src/app/services/produtos/produtos.service';
 import { VendasService } from 'src/app/services/vendas/vendas.service';
+import { VendedoresService } from 'src/app/services/vendedores/vendedores.service';
 
 @Component({
     selector: 'app-cad-vendas',
@@ -23,14 +25,15 @@ export class CadVendasComponent implements OnInit  {
         vendasDTO: {
             id: 0,
             clienteId: 0,
-            nomeCliente: '',
-            motorista: '',
+            vendedorId: 0,
             valorTotalVenda: 0,
             valorPago: 0,
             status: '',
             dataVenda: new Date(),
             valorPendente: 0,
-            observacao: ''
+            observacao: '',
+            nomeCliente: '',
+            nomeVendedor: ''
         },
         produtosVendidosDTO: []
     }
@@ -57,6 +60,7 @@ export class CadVendasComponent implements OnInit  {
     ngOnInit() {
         this.getClientes();
         this.getProdutos();
+        this.getVendedores();
     }
 
     toggle() {
@@ -68,6 +72,7 @@ export class CadVendasComponent implements OnInit  {
     constructor(
         private vendasService: VendasService,
         private clientesService: ClientesService,
+        private vendedoresService: VendedoresService,
         private produtosService: ProdutosService,
         private toastrService: NbToastrService, private router: Router,
         private sidebarService: NbSidebarService
@@ -79,7 +84,7 @@ export class CadVendasComponent implements OnInit  {
         );
         this.toggle()
     }
-    
+
     clientes: Clientes[] = [];
     getClientes(): void {
         this.clientesService.getClientes().subscribe(clientes => {
@@ -92,6 +97,13 @@ export class CadVendasComponent implements OnInit  {
         this.produtosService.get().subscribe(produtos => {
             this.produtos = produtos;
         });
+    }
+
+    vendedores: Vendedores[] = [];
+    getVendedores(): void {
+      this.vendedoresService.get().subscribe(vendedores => {
+        this.vendedores = vendedores;
+      });
     }
 
     private filterClientes(value: string): Clientes[] {
