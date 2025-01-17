@@ -24,11 +24,6 @@ export class ModalVendaComponent {
 
   atualizar() {
 
-    if (this.valorAserPago < this.data.vendasComProdutosDTO.vendasDTO.valorPago) {
-      this.toastrService.danger(`Valor pago deve ser maior que R$${this.data.vendasComProdutosDTO.vendasDTO.valorPago}`, "Danger");
-    } else if (this.valorAserPago > this.data.vendasComProdutosDTO.vendasDTO.valorPendente) {
-      this.toastrService.danger(`Valor pago deve ser menor que R$${this.data.vendasComProdutosDTO.vendasDTO.valorPendente}`, "Danger");
-    } else {
       this.vendasService.cadastrarVendas(this.data.vendasComProdutosDTO).subscribe(
         response => {
           this.toastrService.success("Venda atualizada com sucesso!", "Sucesso");
@@ -51,8 +46,7 @@ export class ModalVendaComponent {
 
         }
       )
-    }
-
+    
   }
 
   deletar(vendasComProdutosDTO: VendasComProdutosDTO) {

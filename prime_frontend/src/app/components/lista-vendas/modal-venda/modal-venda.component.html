@@ -93,7 +93,7 @@
                   size="small" 
                   (click)="deletar(data.vendasComProdutosDTO)" 
                   class="delete-button"
-                  [disabled]="data.vendasComProdutosDTO.vendasDTO.status == 'Pago' || !data.isEdit">
+                  [disabled]="!data.isEdit">
                   <nb-icon icon="trash-2-outline"></nb-icon>
                 </button>
               </div>

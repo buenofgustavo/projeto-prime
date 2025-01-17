@@ -8,6 +8,7 @@ import com.centralti.tdm.services.servicesinterface.PagamentosService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,8 @@ public class VendasServiceImpl implements VendasService {
     VendedoresRepository vendedoresRepository;
 
     @Autowired
-    ProdutosVendidosRepository produtosVendidosRepository;
+    @Lazy
+    VendasService vendasService;
 
     @Override
     public Long create(VendasDTO vendasDTO, Double valorTotalVenda) {
@@ -44,7 +46,7 @@ public class VendasServiceImpl implements VendasService {
         String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Vendas vendas;
-
+        Double valorParaPagamento = 0d;
         Optional<Vendedores> optionalVendedores = vendedoresRepository.findById(vendasDTO.vendedorId());
         if(optionalVendedores.isPresent()) {
 
@@ -54,7 +56,7 @@ public class VendasServiceImpl implements VendasService {
                 vendas = vendasRepository.findById(vendasDTO.id())
                         .orElseThrow(() -> new EntityNotFoundException("Venda não encontrada com o ID: " + vendasDTO.id()));
                 vendas.setDataVenda(vendasDTO.dataVenda());
-                vendas.setValorPago(vendasDTO.valorPago());
+                vendas.setVendedorId(vendasDTO.vendedorId());
                 vendas.setAtualizadoPor(emailUsuario);
                 vendas.setObservacao(vendas.getObservacao());
 
@@ -64,8 +66,13 @@ public class VendasServiceImpl implements VendasService {
 
                 vendas.setDataCadastro(dataHoraAtual);
                 vendas.setCriadoPor(emailUsuario);
+                valorParaPagamento = vendas.getValorPago();
+
             }
             vendas.setValorTotalVenda(valorTotalVenda);
+            if(vendas.getValorPago() == null){
+                vendas.setValorPago(0d);
+            }
             Double valorRestante = vendas.getValorTotalVenda() - vendas.getValorPago();
             vendas.setValorPendente(valorRestante);
             if (vendas.getValorPago().equals(vendas.getValorTotalVenda())){
@@ -81,9 +88,17 @@ public class VendasServiceImpl implements VendasService {
             if(vendasDTO.valorPago() != 0){
                 vendas.setDataUltimoPagamento(dataHoraAtual);
             }
+
             vendas = vendasRepository.save(vendas); // O ID será atribuído automaticamente após o save
 
-            SaldoDevedor(vendas.getClienteId());
+            vendasService.SaldoDevedor(vendas.getClienteId());
+
+            if (valorParaPagamento > 0) {
+                PagamentosDTO pagamentosDTO = new PagamentosDTO(
+                        vendas.getId(), valorParaPagamento, dataHoraAtual, emailUsuario
+                );
+                pagamentosService.create(pagamentosDTO);
+            }
 
             return vendas.getId();
 
