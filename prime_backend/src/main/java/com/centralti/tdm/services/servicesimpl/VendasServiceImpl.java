@@ -1,10 +1,10 @@
 package com.centralti.tdm.services.servicesimpl;
 
-import com.centralti.tdm.domain.usuarios.DTO.PagamentosDTO;
+import com.centralti.tdm.domain.usuarios.DTO.PagamentosVendaDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
 import com.centralti.tdm.domain.usuarios.entidades.*;
 import com.centralti.tdm.domain.usuarios.repositories.*;
-import com.centralti.tdm.services.servicesinterface.PagamentosService;
+import com.centralti.tdm.services.servicesinterface.PagamentosVendaService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +28,10 @@ public class VendasServiceImpl implements VendasService {
     ClientesRepository clientesRepository;
 
     @Autowired
-    PagamentosService pagamentosService;
+    PagamentosVendaService pagamentosVendaService;
 
     @Autowired
-    PagamentosRepository pagamentosRepository;
+    PagamentosVendaRepository pagamentosVendaRepository;
 
     @Autowired
     VendedoresRepository vendedoresRepository;
@@ -41,7 +41,7 @@ public class VendasServiceImpl implements VendasService {
     VendasService vendasService;
 
     @Override
-    public Long create(VendasDTO vendasDTO, Double valorTotalVenda) {
+    public Long create(VendasDTO vendasDTO, Double valorTotalVenda, Long pagamentoId) {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -94,10 +94,10 @@ public class VendasServiceImpl implements VendasService {
             vendasService.SaldoDevedor(vendas.getClienteId());
 
             if (valorParaPagamento > 0) {
-                PagamentosDTO pagamentosDTO = new PagamentosDTO(
-                        vendas.getId(), valorParaPagamento, dataHoraAtual, emailUsuario
+                PagamentosVendaDTO pagamentosDTO = new PagamentosVendaDTO(
+                        pagamentoId, vendas.getId(), valorParaPagamento, dataHoraAtual, emailUsuario
                 );
-                pagamentosService.create(pagamentosDTO);
+                pagamentosVendaService.create(pagamentosDTO);
             }
 
             return vendas.getId();
@@ -111,7 +111,7 @@ public class VendasServiceImpl implements VendasService {
 
     @Override
     @Transactional
-    public void pagar(VendasDTO vendasDTO) {
+    public void pagar(VendasDTO vendasDTO, Double valorASerPago, Long pagamentoId) {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -119,9 +119,6 @@ public class VendasServiceImpl implements VendasService {
 
         if (vendasOptional.isPresent()) {
             Vendas vendas = vendasOptional.get();
-
-            // Pega o valor pago atual e subtrai o valor que já foi pago
-            Double valorASerPago = vendasDTO.valorPago() - vendas.getValorPago();
 
             // Define o valor pago
             vendas.setValorPago(vendasDTO.valorPago());
@@ -146,24 +143,24 @@ public class VendasServiceImpl implements VendasService {
             }
 
             if (valorASerPago > 0) {
-                PagamentosDTO pagamentosDTO = new PagamentosDTO(
-                        vendas.getId(), valorASerPago, dataHoraAtual, emailUsuario
+                PagamentosVendaDTO pagamentosVendaDTO = new PagamentosVendaDTO(
+                       pagamentoId ,vendas.getId(), valorASerPago, dataHoraAtual, emailUsuario
                 );
-                pagamentosService.create(pagamentosDTO);
+                pagamentosVendaService.create(pagamentosVendaDTO);
 
             } else if (vendasDTO.valorPago() < vendas.getValorPago()) {
 
                 // Remover pagamentos associados à venda
-                List<Pagamentos> pagamentos = pagamentosRepository.findPagamentosByVendaId(vendas.getId());
-                if (pagamentos != null && !pagamentos.isEmpty()) {
-                    pagamentosRepository.deleteAll(pagamentos);
+                List<PagamentosVenda> pagamentosVenda = pagamentosVendaRepository.findPagamentosVendaByVendaId(vendas.getId());
+                if (pagamentosVenda != null && !pagamentosVenda.isEmpty()) {
+                    pagamentosVendaRepository.deleteAll(pagamentosVenda);
                 }
 
-                PagamentosDTO pagamentosDTO = new PagamentosDTO(
-                        vendas.getId(), vendasDTO.valorPago(), dataHoraAtual, emailUsuario
+                PagamentosVendaDTO pagamentosVendaDTO = new PagamentosVendaDTO(
+                       pagamentoId, vendas.getId(), vendasDTO.valorPago(), dataHoraAtual, emailUsuario
                 );
 
-                pagamentosService.create(pagamentosDTO);
+                pagamentosVendaService.create(pagamentosVendaDTO);
             }
 
 
@@ -177,7 +174,7 @@ public class VendasServiceImpl implements VendasService {
 
     @Override
     @Transactional
-    public void pagarSaldoDevedor(VendasDTO vendasDTO, Double valorPago) {
+    public void pagarSaldoDevedor(VendasDTO vendasDTO, Double valorPago, Long pagamentoId) {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -211,11 +208,11 @@ public class VendasServiceImpl implements VendasService {
             }
 
             if (valorPago > 0) {
-                PagamentosDTO pagamentosDTO = new PagamentosDTO(
-                        vendas.getId(), valorPago, dataHoraAtual, emailUsuario
+                PagamentosVendaDTO pagamentosDTO = new PagamentosVendaDTO(
+                        pagamentoId, vendas.getId(), valorPago, dataHoraAtual, emailUsuario
                 );
 
-                pagamentosService.create(pagamentosDTO);
+                pagamentosVendaService.create(pagamentosDTO);
             }
 
             vendasRepository.save(vendas);

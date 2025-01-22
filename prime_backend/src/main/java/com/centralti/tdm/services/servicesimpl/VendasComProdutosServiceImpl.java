@@ -1,22 +1,25 @@
 package com.centralti.tdm.services.servicesimpl;
 
-import com.centralti.tdm.domain.usuarios.DTO.ClientesDTO;
+import com.centralti.tdm.domain.usuarios.DTO.PagamentosDTO;
 import com.centralti.tdm.domain.usuarios.DTO.ProdutosVendidosDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasComProdutosDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
 import com.centralti.tdm.domain.usuarios.entidades.*;
 import com.centralti.tdm.domain.usuarios.repositories.*;
-import com.centralti.tdm.services.servicesinterface.ProdutosService;
+import com.centralti.tdm.services.servicesinterface.PagamentosService;
 import com.centralti.tdm.services.servicesinterface.ProdutosVendidosService;
 import com.centralti.tdm.services.servicesinterface.VendasComProdutosService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +38,7 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
     ProdutosVendidosRepository produtosVendidosRepository;
 
     @Autowired
-    PagamentosRepository pagamentosRepository;
+    PagamentosVendaRepository pagamentosVendaRepository;
 
     @Autowired
     ClientesRepository clientesRepository;
@@ -46,26 +49,71 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
     @Autowired
     VendedoresRepository vendedoresRepository;
 
+    @Autowired
+    PagamentosService pagamentosService;
+
+    @Autowired
+    PagamentosRepository pagamentosRepository;
+
     @Override
     @Transactional
     public void create(VendasComProdutosDTO vendasComProdutosDTO) {
         Double totalVenda = 0.0;
+        LocalDateTime dataHoraAtual = LocalDateTime.now();
+        String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long pagamentoId = 0L;
+        Double valorASerPago = vendasComProdutosDTO.vendasDTO().valorPago();
 
         for (ProdutosVendidosDTO produtoVendidoDTO : vendasComProdutosDTO.produtosVendidosDTO()) {
             totalVenda += produtoVendidoDTO.valorUnitario() * produtoVendidoDTO.quantidade();
         }
 
-        Long vendaId = vendasService.create(vendasComProdutosDTO.vendasDTO(), totalVenda);
+        Optional<Vendas> vendasOptional = vendasRepository.findById(vendasComProdutosDTO.vendasDTO().id());
+        if (vendasOptional.isPresent()) {
+            Vendas vendas = vendasOptional.get();
+            valorASerPago = vendasComProdutosDTO.vendasDTO().valorPago() - vendas.getValorPago();
+        }
 
-        for (ProdutosVendidosDTO produtoVendidoDTO : vendasComProdutosDTO.produtosVendidosDTO()) {
-            produtosVendidosService.create(produtoVendidoDTO, vendaId);
+        if (valorASerPago > 0) {
+            PagamentosDTO pagamentosDTO = new PagamentosDTO(
+                    vendasComProdutosDTO.vendasDTO().clienteId(), valorASerPago, dataHoraAtual, emailUsuario
+            );
+            pagamentoId = pagamentosService.create(pagamentosDTO);
+        }
+
+        Long vendaId = vendasService.create(vendasComProdutosDTO.vendasDTO(), totalVenda, pagamentoId);
+
+        if (vendasOptional.isEmpty()) {
+            for (ProdutosVendidosDTO produtoVendidoDTO : vendasComProdutosDTO.produtosVendidosDTO()) {
+                produtosVendidosService.create(produtoVendidoDTO, vendaId);
+            }
         }
 
     }
 
     @Override
     public void pagar(VendasComProdutosDTO vendasComProdutosDTO) {
-        vendasService.pagar(vendasComProdutosDTO.vendasDTO());
+        LocalDateTime dataHoraAtual = LocalDateTime.now();
+        String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long pagamentoId = 0L;
+
+        Optional<Vendas> vendasOptional = vendasRepository.findById(vendasComProdutosDTO.vendasDTO().id());
+
+        if (vendasOptional.isPresent()) {
+            Vendas vendas = vendasOptional.get();
+            Double valorASerPago = vendasComProdutosDTO.vendasDTO().valorPago() - vendas.getValorPago();
+
+            if (valorASerPago > 0) {
+                PagamentosDTO pagamentosDTO = new PagamentosDTO(
+                        vendas.getClienteId(), valorASerPago, dataHoraAtual, emailUsuario
+                );
+                pagamentoId = pagamentosService.create(pagamentosDTO);
+            }
+
+            vendasService.pagar(vendasComProdutosDTO.vendasDTO(), valorASerPago, pagamentoId);
+
+        }
+
     }
 
     @Override
@@ -126,9 +174,18 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
                 .orElseThrow(() -> new EntityNotFoundException("Venda não encontrada com o ID: " + id));
 
         // Remover pagamentos associados à venda
-        List<Pagamentos> pagamentos = pagamentosRepository.findPagamentosByVendaId(vendas.getId());
-        if (pagamentos != null && !pagamentos.isEmpty()) {
-            pagamentosRepository.deleteAll(pagamentos);
+        List<PagamentosVenda> pagamentosVenda = pagamentosVendaRepository.findPagamentosVendaByVendaId(vendas.getId());
+        if (pagamentosVenda != null && !pagamentosVenda.isEmpty()) {
+            for (PagamentosVenda pagamentoVenda : pagamentosVenda) {
+                Optional<Pagamentos> optionalPagamentos = pagamentosRepository.findById(pagamentoVenda.getPagamentoId());
+                if (optionalPagamentos.isPresent()) {
+                    Pagamentos pagamentos = optionalPagamentos.get();
+                    Double valorAposSubtrairVenda = pagamentos.getValorPago() - pagamentoVenda.getValorPago();
+                    pagamentos.setValorPago(valorAposSubtrairVenda);
+                    pagamentosRepository.save(pagamentos);
+                }
+            }
+            pagamentosVendaRepository.deleteAll(pagamentosVenda);
         }
 
         // Remover produtos associados à venda

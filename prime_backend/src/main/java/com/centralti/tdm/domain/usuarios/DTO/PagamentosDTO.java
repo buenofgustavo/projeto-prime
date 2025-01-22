@@ -1,14 +1,13 @@
 package com.centralti.tdm.domain.usuarios.DTO;
 
 import com.centralti.tdm.domain.usuarios.entidades.Pagamentos;
-import com.centralti.tdm.domain.usuarios.entidades.ProdutosVendidos;
-import com.centralti.tdm.domain.usuarios.entidades.Vendas;
+import com.centralti.tdm.domain.usuarios.entidades.PagamentosVenda;
 
 import java.time.LocalDateTime;
 
 public record PagamentosDTO(
 
-        Long vendaId,
+        Long clienteId,
         Double valorPago,
         LocalDateTime dataPagamento,
         String atualizadoPor
@@ -16,7 +15,7 @@ public record PagamentosDTO(
 ) {
     public PagamentosDTO(Pagamentos pagamentos){
         this(
-                pagamentos.getVendaId(), pagamentos.getValorPago(),
+                pagamentos.getClienteId(), pagamentos.getValorPago(),
                 pagamentos.getDataPagamento(), pagamentos.getAtualizadoPor()
         );
     }

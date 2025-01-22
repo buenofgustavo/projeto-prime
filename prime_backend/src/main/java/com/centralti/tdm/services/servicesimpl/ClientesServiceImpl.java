@@ -1,16 +1,16 @@
 package com.centralti.tdm.services.servicesimpl;
 
 import com.centralti.tdm.domain.usuarios.DTO.ClientesDTO;
+import com.centralti.tdm.domain.usuarios.DTO.PagamentosDTO;
+import com.centralti.tdm.domain.usuarios.DTO.PagamentosVendaDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
 import com.centralti.tdm.domain.usuarios.entidades.Categorias;
 import com.centralti.tdm.domain.usuarios.entidades.Cidades;
 import com.centralti.tdm.domain.usuarios.entidades.Clientes;
 import com.centralti.tdm.domain.usuarios.entidades.Vendas;
-import com.centralti.tdm.domain.usuarios.repositories.CategoriasRepository;
-import com.centralti.tdm.domain.usuarios.repositories.CidadesRepository;
-import com.centralti.tdm.domain.usuarios.repositories.ClientesRepository;
-import com.centralti.tdm.domain.usuarios.repositories.VendasRepository;
+import com.centralti.tdm.domain.usuarios.repositories.*;
 import com.centralti.tdm.services.servicesinterface.ClientesService;
+import com.centralti.tdm.services.servicesinterface.PagamentosService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,9 @@ public class ClientesServiceImpl implements ClientesService {
 
     @Autowired
     CategoriasRepository categoriasRepository;
+
+    @Autowired
+    PagamentosService pagamentosService;
 
     @Autowired
     VendasService vendasService;
@@ -72,10 +75,22 @@ public class ClientesServiceImpl implements ClientesService {
 
     @Override
     public void pagarSaldoDevedor(Long id, Double valorPago) {
+        LocalDateTime dataHoraAtual = LocalDateTime.now();
+        String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+
         Optional<Clientes> clienteOptional = clientesRepository.findById(id);
+        Long pagamentoId = 0L;
 
         if (clienteOptional.isPresent()) {
             Clientes cliente = clienteOptional.get();
+
+            if (valorPago > 0) {
+                PagamentosDTO pagamentosDTO = new PagamentosDTO(
+                       cliente.getId() , valorPago, dataHoraAtual, emailUsuario
+                );
+                pagamentoId = pagamentosService.create(pagamentosDTO);
+            }
+
             List<Vendas> vendas = vendasRepository.findByClienteIdOrderByDataVendaAsc(cliente.getId());
 
             for (Vendas venda : vendas) {
@@ -89,9 +104,9 @@ public class ClientesServiceImpl implements ClientesService {
 
                 if(valorPago >= valorPendente) {
                     valorPago -= vendasDTO.valorPendente();
-                    vendasService.pagarSaldoDevedor(vendasDTO, vendasDTO.valorPendente());
+                    vendasService.pagarSaldoDevedor(vendasDTO, vendasDTO.valorPendente(), pagamentoId);
                 } else {
-                    vendasService.pagarSaldoDevedor(vendasDTO, valorPago);
+                    vendasService.pagarSaldoDevedor(vendasDTO, valorPago, pagamentoId);
                     valorPago = 0d;
                 }
 

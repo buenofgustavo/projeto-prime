@@ -9,11 +9,11 @@ import java.util.List;
 @Service
 public interface VendasService {
 
-    Long create(VendasDTO vendasDTO, Double valorTotalVenda);
+    Long create(VendasDTO vendasDTO, Double valorTotalVenda, Long pagamentoId);
 
-    void pagar(VendasDTO vendasDTO);
+    void pagar(VendasDTO vendasDTO, Double valorASerPago, Long pagamentoId);
 
-    void pagarSaldoDevedor(VendasDTO vendasDTO, Double valorPago);
+    void pagarSaldoDevedor(VendasDTO vendasDTO, Double valorPago, Long pagamentoId);
 
     void SaldoDevedor(Long idCliente);
 

@@ -28,12 +28,12 @@ public class ProdutosVendidosServiceImpl implements ProdutosVendidosService {
 
         Optional<Produtos> optionalProdutos = produtosRepository.findById(produtosVendidosDTO.produtoId());
         if(optionalProdutos.isPresent()){
-        Double totalProdutos = produtosVendidosDTO.valorUnitario() * produtosVendidosDTO.quantidade();
 
-        ProdutosVendidos produtosVendidos = new ProdutosVendidos(produtosVendidosDTO);
-        produtosVendidos.setValorTotalProduto(totalProdutos);
+            Double totalProdutos = produtosVendidosDTO.valorUnitario() * produtosVendidosDTO.quantidade();
+            ProdutosVendidos produtosVendidos = new ProdutosVendidos(produtosVendidosDTO);
+            produtosVendidos.setValorTotalProduto(totalProdutos);
+            produtosVendidosRepository.save(produtosVendidos);
 
-        produtosVendidosRepository.save(produtosVendidos);
         } else {
             throw new EntityNotFoundException("Produto não encontrado");
         }
@@ -46,12 +46,11 @@ public class ProdutosVendidosServiceImpl implements ProdutosVendidosService {
         Optional<Produtos> optionalProdutos = produtosRepository.findById(produtosVendidosDTO.produtoId());
         if(optionalProdutos.isPresent()){
             Double totalProdutos = produtosVendidosDTO.valorUnitario() * produtosVendidosDTO.quantidade();
-
             ProdutosVendidos produtosVendidos = new ProdutosVendidos(produtosVendidosDTO);
             produtosVendidos.setVendaId(vendaId);
             produtosVendidos.setValorTotalProduto(totalProdutos);
-
             produtosVendidosRepository.save(produtosVendidos);
+
         } else {
             throw new EntityNotFoundException("Produto não encontrado");
         }
