@@ -11,4 +11,7 @@ public interface PagamentosService {
     Long create(PagamentosDTO pagamentosDTO);
 
     List<PagamentosDTO> listar();
+
+    void delete(Long id);
+
 }

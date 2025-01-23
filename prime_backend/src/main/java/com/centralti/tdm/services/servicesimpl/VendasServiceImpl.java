@@ -58,7 +58,7 @@ public class VendasServiceImpl implements VendasService {
                 vendas.setDataVenda(vendasDTO.dataVenda());
                 vendas.setVendedorId(vendasDTO.vendedorId());
                 vendas.setAtualizadoPor(emailUsuario);
-                vendas.setObservacao(vendas.getObservacao());
+                vendas.setObservacao(vendasDTO.observacao());
 
             } else {
                 // Criar nova venda

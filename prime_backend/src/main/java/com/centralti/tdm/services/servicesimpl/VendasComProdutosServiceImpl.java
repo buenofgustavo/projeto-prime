@@ -183,6 +183,9 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
                     Double valorAposSubtrairVenda = pagamentos.getValorPago() - pagamentoVenda.getValorPago();
                     pagamentos.setValorPago(valorAposSubtrairVenda);
                     pagamentosRepository.save(pagamentos);
+                    if(valorAposSubtrairVenda == 0d){
+                        pagamentosRepository.delete(pagamentos);
+                    }
                 }
             }
             pagamentosVendaRepository.deleteAll(pagamentosVenda);
