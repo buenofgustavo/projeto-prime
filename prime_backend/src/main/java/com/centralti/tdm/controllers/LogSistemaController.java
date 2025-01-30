@@ -1,26 +1,26 @@
 package com.centralti.tdm.controllers;
 
 import com.centralti.tdm.domain.usuarios.DTO.CategoriasDTO;
-import com.centralti.tdm.domain.usuarios.DTO.CidadesDTO;
+import com.centralti.tdm.domain.usuarios.DTO.LogSistemaDTO;
 import com.centralti.tdm.errors.ErrorResponses;
 import com.centralti.tdm.services.servicesinterface.CategoriasService;
-import com.centralti.tdm.services.servicesinterface.CidadesService;
+import com.centralti.tdm.services.servicesinterface.LogSistemaService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/categorias")
-public class CategoriasController {
+@RequestMapping("/log")
+public class LogSistemaController {
 
     @Autowired
-    CategoriasService categoriasService;
+    LogSistemaService logSistemaService;
 
     @PostMapping()
-    public ResponseEntity create(@RequestBody CategoriasDTO categoriasDTO) {
+    public ResponseEntity create(@RequestBody LogSistemaDTO logSistemaDTO) {
         try {
-            categoriasService.create(categoriasDTO);
+            logSistemaService.create(logSistemaDTO);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             ErrorResponses errorResponses = new ErrorResponses(e.getMessage());
@@ -29,22 +29,11 @@ public class CategoriasController {
     }
 
     @GetMapping()
-    public ResponseEntity findByCategorias(){
+    public ResponseEntity findByLogs(){
         try {
-            var dados = categoriasService.listar();
+            var dados = logSistemaService.listar();
             return ResponseEntity.ok(dados);
         } catch (EntityNotFoundException e) {
-            ErrorResponses errorResponses = new ErrorResponses(e.getMessage());
-            return ResponseEntity.badRequest().body(errorResponses);
-        }
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
-        try {
-            categoriasService.deletar(id);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
             ErrorResponses errorResponses = new ErrorResponses(e.getMessage());
             return ResponseEntity.badRequest().body(errorResponses);
         }

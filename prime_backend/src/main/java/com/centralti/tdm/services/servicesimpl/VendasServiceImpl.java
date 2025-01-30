@@ -1,9 +1,11 @@
 package com.centralti.tdm.services.servicesimpl;
 
+import com.centralti.tdm.domain.usuarios.DTO.LogSistemaDTO;
 import com.centralti.tdm.domain.usuarios.DTO.PagamentosVendaDTO;
 import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
 import com.centralti.tdm.domain.usuarios.entidades.*;
 import com.centralti.tdm.domain.usuarios.repositories.*;
+import com.centralti.tdm.services.servicesinterface.LogSistemaService;
 import com.centralti.tdm.services.servicesinterface.PagamentosVendaService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,9 @@ public class VendasServiceImpl implements VendasService {
     @Lazy
     VendasService vendasService;
 
+    @Autowired
+    LogSistemaService logSistemaService;
+
     @Override
     public Long create(VendasDTO vendasDTO, Double valorTotalVenda, Long pagamentoId) {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
@@ -50,23 +56,45 @@ public class VendasServiceImpl implements VendasService {
         Optional<Vendedores> optionalVendedores = vendedoresRepository.findById(vendasDTO.vendedorId());
         if(optionalVendedores.isPresent()) {
 
+            StringBuilder mensagem;
+            String categoria;
+
             if (vendasDTO.id() != null && vendasDTO.id() != 0 ) {
 
                 // Buscar a venda existente para atualização
                 vendas = vendasRepository.findById(vendasDTO.id())
                         .orElseThrow(() -> new EntityNotFoundException("Venda não encontrada com o ID: " + vendasDTO.id()));
+
+                mensagem = new StringBuilder("Venda atualizada do cliente " + vendasDTO.nomeCliente() + " " + valorTotalVenda);
+
+                if (!vendas.getDataVenda().equals(vendasDTO.dataVenda())) {
+                    mensagem.append(" | Data alterada de ").append(vendas.getDataVenda()).append(" para ").append(vendasDTO.dataVenda());
+                }
+                if (!vendas.getVendedorId().equals(vendasDTO.vendedorId())) {
+                    mensagem.append(" | Vendedor alterado de ").append(vendas.getVendedorId()).append(" para ").append(vendasDTO.vendedorId());
+                }
+                if (!Objects.equals(vendas.getObservacao(), vendasDTO.observacao())) {
+                    mensagem.append(" | Observação alterada de ").append(vendas.getObservacao()).append(" para ").append(vendasDTO.observacao());
+                }
+
+                categoria = "Atualização de Venda";
+
                 vendas.setDataVenda(vendasDTO.dataVenda());
                 vendas.setVendedorId(vendasDTO.vendedorId());
                 vendas.setAtualizadoPor(emailUsuario);
                 vendas.setObservacao(vendasDTO.observacao());
 
             } else {
+
                 // Criar nova venda
                 vendas = new Vendas(vendasDTO);
 
                 vendas.setDataCadastro(dataHoraAtual);
                 vendas.setCriadoPor(emailUsuario);
                 valorParaPagamento = vendas.getValorPago();
+
+                mensagem = new StringBuilder("Venda cadastrada do cliente " + vendasDTO.nomeCliente() + " no valor de " + valorTotalVenda);
+                categoria = "Cadastro de Venda";
 
             }
             vendas.setValorTotalVenda(valorTotalVenda);
@@ -89,7 +117,12 @@ public class VendasServiceImpl implements VendasService {
                 vendas.setDataUltimoPagamento(dataHoraAtual);
             }
 
+
+
             vendas = vendasRepository.save(vendas); // O ID será atribuído automaticamente após o save
+
+            LogSistemaDTO logSistemaDTO = new LogSistemaDTO(null, mensagem.toString(), emailUsuario, vendasDTO.clienteId(), vendas.getId(),categoria,null, null);
+            logSistemaService.create(logSistemaDTO);
 
             vendasService.SaldoDevedor(vendas.getClienteId());
 

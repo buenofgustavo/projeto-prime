@@ -27,4 +27,15 @@ public class PagamentosController {
         }
     }
 
+    @GetMapping()
+    public ResponseEntity findByPagamentos(){
+        try {
+            var dados = pagamentosService.listar();
+            return ResponseEntity.ok(dados);
+        } catch (EntityNotFoundException e) {
+            ErrorResponses errorResponses = new ErrorResponses(e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponses);
+        }
+    }
+
 }

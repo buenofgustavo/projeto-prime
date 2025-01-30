@@ -1,15 +1,13 @@
 package com.centralti.tdm.services.servicesimpl;
 
-import com.centralti.tdm.domain.usuarios.DTO.ClientesDTO;
-import com.centralti.tdm.domain.usuarios.DTO.PagamentosDTO;
-import com.centralti.tdm.domain.usuarios.DTO.PagamentosVendaDTO;
-import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
+import com.centralti.tdm.domain.usuarios.DTO.*;
 import com.centralti.tdm.domain.usuarios.entidades.Categorias;
 import com.centralti.tdm.domain.usuarios.entidades.Cidades;
 import com.centralti.tdm.domain.usuarios.entidades.Clientes;
 import com.centralti.tdm.domain.usuarios.entidades.Vendas;
 import com.centralti.tdm.domain.usuarios.repositories.*;
 import com.centralti.tdm.services.servicesinterface.ClientesService;
+import com.centralti.tdm.services.servicesinterface.LogSistemaService;
 import com.centralti.tdm.services.servicesinterface.PagamentosService;
 import com.centralti.tdm.services.servicesinterface.VendasService;
 import jakarta.persistence.EntityNotFoundException;
@@ -42,6 +40,9 @@ public class ClientesServiceImpl implements ClientesService {
 
     @Autowired
     VendasService vendasService;
+
+    @Autowired
+    LogSistemaService logSistemaService;
 
     @Override
     public void create(ClientesDTO clientesDTO) {
@@ -77,6 +78,9 @@ public class ClientesServiceImpl implements ClientesService {
     public void pagarSaldoDevedor(Long id, Double valorPago) {
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        String mensagem;
+
 
         Optional<Clientes> clienteOptional = clientesRepository.findById(id);
         Long pagamentoId = 0L;

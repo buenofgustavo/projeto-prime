@@ -1,15 +1,9 @@
 package com.centralti.tdm.services.servicesimpl;
 
-import com.centralti.tdm.domain.usuarios.DTO.PagamentosDTO;
-import com.centralti.tdm.domain.usuarios.DTO.ProdutosVendidosDTO;
-import com.centralti.tdm.domain.usuarios.DTO.VendasComProdutosDTO;
-import com.centralti.tdm.domain.usuarios.DTO.VendasDTO;
+import com.centralti.tdm.domain.usuarios.DTO.*;
 import com.centralti.tdm.domain.usuarios.entidades.*;
 import com.centralti.tdm.domain.usuarios.repositories.*;
-import com.centralti.tdm.services.servicesinterface.PagamentosService;
-import com.centralti.tdm.services.servicesinterface.ProdutosVendidosService;
-import com.centralti.tdm.services.servicesinterface.VendasComProdutosService;
-import com.centralti.tdm.services.servicesinterface.VendasService;
+import com.centralti.tdm.services.servicesinterface.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,6 +48,9 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
 
     @Autowired
     PagamentosRepository pagamentosRepository;
+
+    @Autowired
+    LogSistemaService logSistemaService;
 
     @Override
     @Transactional
@@ -169,6 +166,9 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
 
     @Override
     public void deletar(Long id) {
+
+        String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+
         // Buscar a entidade de vendas pelo ID
         Vendas vendas = vendasRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Venda não encontrada com o ID: " + id));
@@ -201,6 +201,16 @@ public class VendasComProdutosServiceImpl implements VendasComProdutosService {
         vendasRepository.delete(vendas);
 
         vendasService.SaldoDevedor(vendas.getClienteId());
+
+        Optional<Clientes> clientesOptional = clientesRepository.findById(vendas.getClienteId());
+        if(clientesOptional.isPresent()) {
+            Clientes clientes = clientesOptional.get();
+            String mensagem;
+            mensagem = "Venda deletada do cliente " + clientes.getNome() + " no valor de " + vendas.getValorTotalVenda();
+
+            LogSistemaDTO logSistemaDTO = new LogSistemaDTO(null, mensagem, emailUsuario, vendas.getClienteId(), null, "Exclusão de Venda", null, null);
+            logSistemaService.create(logSistemaDTO);
+        }
     }
     
 
