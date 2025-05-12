@@ -1,7 +1,7 @@
 <nb-layout>
 
   <nb-layout-header fixed>
-    <button style="margin-right: 26px;" nbButton (click)="toggle()">
+    <button style="margin-right: 26px;" ghost nbButton (click)="toggle()">
       <nb-icon icon="menu-outline"></nb-icon>
     </button>
     <img src="" alt="">
@@ -11,7 +11,7 @@
       
   </nb-layout-header>
 
-  <nb-sidebar class="navbar">
+  <nb-sidebar class="navbar" state="compacted" responsive>
     <nb-menu class="itens" [items]="items"></nb-menu>
   </nb-sidebar>
 

@@ -15,7 +15,7 @@ export class HomeComponent {
   constructor(
     private sidebarService: NbSidebarService,
   ) {
-    this.toggle()
+    // this.toggle()
   }
 
 }

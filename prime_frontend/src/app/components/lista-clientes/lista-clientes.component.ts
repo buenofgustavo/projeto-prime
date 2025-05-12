@@ -42,7 +42,7 @@ export class ListaClientesComponent {
     private sidebarService: NbSidebarService
   ) {
     this.getClientes();
-    this.toggle()
+    // this.toggle()
   }
 
   openDialogVisualizar(clientes: Clientes) {

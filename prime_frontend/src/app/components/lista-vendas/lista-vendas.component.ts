@@ -19,7 +19,7 @@ export class ListaVendasComponent {
 
 
   dataSource = new MatTableDataSource<VendasComProdutosDTO>(this.vendasComProdutosDTO);
-  displayedColumns: string[] = ['nomeCliente', 'data', 'valorPendente', 'acao'];
+  displayedColumns: string[] = ['vendaId', 'nomeCliente', 'data', 'valorPendente', 'acao'];
 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -39,7 +39,7 @@ export class ListaVendasComponent {
     private sidebarService: NbSidebarService
   ) {
     this.getVendas();
-    this.toggle()
+    // this.toggle()
   }
   
   openDialogVisualizar(vendasComProdutosDTO: VendasComProdutosDTO) {

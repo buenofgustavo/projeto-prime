@@ -8,6 +8,8 @@ import { Cidades } from 'src/app/interface/cidades';
 import { CidadesService } from 'src/app/services/cidades/cidades.service';
 import { Categorias } from 'src/app/interface/categorias';
 import { CategoriasService } from 'src/app/services/categorias/categorias.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-cad-cliente',
@@ -35,7 +37,7 @@ export class CadClienteComponent implements OnInit {
   toggle() {
     this.sidebarService.toggle();
   }
-  
+
   ngOnInit() {
     this.getCidades();
     this.getCategorias()
@@ -46,9 +48,10 @@ export class CadClienteComponent implements OnInit {
     private cidadesService: CidadesService,
     private categoriasService: CategoriasService,
     private toastrService: NbToastrService, private router: Router,
-    private sidebarService: NbSidebarService
+    private sidebarService: NbSidebarService,
+    private dialog: MatDialog
   ) {
-    this.toggle()
+    // this.toggle()
   }
 
   cidades: Cidades[] = [];
@@ -66,29 +69,40 @@ export class CadClienteComponent implements OnInit {
   }
 
   create() {
-    this.clientesService.cadastrarClientes(this.cliente).subscribe(
-      response => {
-        this.toastrService.success("Cliente cadastrado com sucesso!", "Sucesso");
-        setTimeout(() => {
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/cad-cliente']); // Navega para a rota de cadastro de armazém
-          });
-        }, 1000);
 
-      },
-      (error) => {
-        console.log('Erro ao cadastrar cliente:', error);
-        if (error.status === 403) {
-          setTimeout(() => {
-            location.reload(); // Recarrega a página após1 segundos
-          }, 2000);
-        } else {
-          this.toastrService.danger('Erro ao cadastrar cliente.', 'Erro');
-        }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Confirmar cadastro',
+        message: 'Tem certeza que deseja cadastrar este cliente?'
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.clientesService.cadastrarClientes(this.cliente).subscribe(
+          response => {
+            this.toastrService.success("Cliente cadastrado com sucesso!", "Sucesso");
+            setTimeout(() => {
+              this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+                this.router.navigate(['/home']); // Navega para a rota de cadastro de armazém
+              });
+            }, 1000);
+
+          },
+          (error) => {
+            console.log('Erro ao cadastrar cliente:', error);
+            if (error.status === 403) {
+              setTimeout(() => {
+                location.reload(); // Recarrega a página após1 segundos
+              }, 2000);
+            } else {
+              this.toastrService.danger('Erro ao cadastrar cliente.', 'Erro');
+            }
+
+          }
+        )
 
       }
-    )
-
+    })
   }
-
 }

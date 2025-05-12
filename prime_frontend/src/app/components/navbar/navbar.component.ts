@@ -15,70 +15,27 @@ import { UsuarioService } from 'src/app/services/usuario/usuario.service';
 export class NavbarComponent {
 
   toggle() {
-    this.sidebarService.toggle();
+    const sidebarState = this.sidebarService.getSidebarState('main-sidebar');
+    sidebarState.subscribe((state) => {
+      if (state === 'compacted') {
+        this.sidebarService.expand('main-sidebar');
+      } else {
+        this.sidebarService.compact('main-sidebar');
+      }
+    });
   }
 
   items: NbMenuItem[] = [
-
-    {
-      title: 'Página Inicial',
-      icon: 'home-outline',
-      link: '/home',
-    },
-    {
-      title: 'Cadastrar Clientes',
-      icon: "clipboard-outline",
-      link: "/cad-cliente",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
-    {
-      title: 'Cadastrar Vendas',
-      icon: "car-outline",
-      link: "/cad-venda",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
-    {
-      title: 'Cadastrar Cidades',
-      icon: "car-outline",
-      link: "/cad-cidades",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
-    {
-      title: 'Cadastrar Produtos',
-      icon: "car-outline",
-      link: "/cad-produtos",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
-    {
-      title: 'Cadastrar Vendedores',
-      icon: "car-outline",
-      link: "/cad-vendedores",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
-    {
-      title: 'Cadastrar Categorias',
-      icon: "car-outline",
-      link: "/cad-categorias",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
-    {
-      title: 'Lista Vendas',
-      icon: "file-text-outline",
-      link: "/list-vendas",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
-    {
-      title: 'Lista Clientes',
-      icon: "file-text-outline",
-      link: "/list-clientes",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
-    {
-      title: 'Cadastrar Usuários',
-      icon: "person-add-outline",
-      link: "/cadastrar-usuario",
-      hidden: !this.authService.hasPermission(['ROLE_ADMIN']),
-    },
+    { title: 'Página Inicial', icon: 'home-outline', link: '/home' },
+    { title: 'Cadastrar Vendas', icon: 'shopping-cart-outline', link: '/cad-venda', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) },
+    { title: 'Cadastrar Clientes', icon: 'person-outline', link: '/cad-cliente', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) },
+    { title: 'Cadastrar Cidades', icon: 'map-outline', link: '/cad-cidades', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) },
+    { title: 'Cadastrar Produtos', icon: 'cube-outline', link: '/cad-produtos', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) },
+    { title: 'Cadastrar Vendedores', icon: 'people-outline', link: '/cad-vendedores', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) },
+    { title: 'Cadastrar Categorias', icon: 'pricetags-outline', link: '/cad-categorias', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) },
+    { title: 'Listar Vendas', icon: 'file-text-outline', link: '/list-vendas', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) },
+    { title: 'Listar Clientes', icon: 'people-outline', link: '/list-clientes', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) },
+    { title: 'Cadastrar Usuários', icon: 'person-add-outline', link: '/cadastrar-usuario', hidden: !this.authService.hasPermission(['ROLE_ADMIN']) }
   ];
 
   items2 = [

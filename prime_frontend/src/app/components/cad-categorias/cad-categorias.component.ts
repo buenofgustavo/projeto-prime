@@ -10,6 +10,8 @@ import { VendedoresService } from 'src/app/services/vendedores/vendedores.servic
 import { Vendedores } from 'src/app/interface/vendedores';
 import { Categorias } from 'src/app/interface/categorias';
 import { CategoriasService } from 'src/app/services/categorias/categorias.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-cad-categorias',
@@ -35,35 +37,44 @@ export class CadCategoriasComponent {
     private categoriasService: CategoriasService,
     private datePipe: DatePipe,
     private toastrService: NbToastrService, private router: Router,
-    private sidebarService: NbSidebarService
+    private sidebarService: NbSidebarService,
+    private dialog: MatDialog
   ) {
-    this.toggle()
+    // this.toggle()
   }
 
   create() {
-    this.categoriasService.cadastrar(this.categorias).subscribe(
-      response => {
-        this.toastrService.success("Categoria cadastrada com sucesso!", "Sucesso");
-        setTimeout(() => {
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/cad-categorias']);
-          });
-        }, 1000);
-
-      },
-      (error) => {
-        console.log('Erro ao cadastrar categoria:', error);
-        if (error.status === 403) {
-          setTimeout(() => {
-            location.reload(); // Recarrega a página após 2 segundos
-          }, 2000);
-        } else {
-          this.toastrService.danger('Erro ao cadastrar categoria.', 'Erro');
-        }
-
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Confirmar cadastro',
+        message: 'Tem certeza que deseja cadastrar esta categoria?'
       }
-    )
-
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.categoriasService.cadastrar(this.categorias).subscribe(
+          response => {
+            this.toastrService.success("Categoria cadastrada com sucesso!", "Sucesso");
+            setTimeout(() => {
+              this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+                this.router.navigate(['/home']);
+              });
+            }, 1000);
+          
+          },
+          (error) => {
+            console.log('Erro ao cadastrar categoria:', error);
+            if (error.status === 403) {
+              setTimeout(() => {
+                location.reload(); // Recarrega a página após 2 segundos
+              }, 2000);
+            } else {
+              this.toastrService.danger('Erro ao cadastrar categoria.', 'Erro');
+            }
+          }
+        )
+      }
+    })  
   }
-
 }

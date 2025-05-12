@@ -18,6 +18,10 @@
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
 
         <!-- Coluna de Cliente -->
+        <ng-container matColumnDef="vendaId">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center;" > Venda </th>
+            <td mat-cell *matCellDef="let element" style="text-align: center;" > {{element.vendasDTO.id}} </td>
+        </ng-container>
         <ng-container matColumnDef="nomeCliente">
             <th mat-header-cell *matHeaderCellDef> Cliente </th>
             <td mat-cell *matCellDef="let element"> {{element.vendasDTO.nomeCliente}} </td>

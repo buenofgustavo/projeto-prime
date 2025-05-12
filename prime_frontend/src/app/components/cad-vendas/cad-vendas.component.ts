@@ -13,13 +13,15 @@ import { ClientesService } from 'src/app/services/clientes/clientes.service';
 import { ProdutosService } from 'src/app/services/produtos/produtos.service';
 import { VendasService } from 'src/app/services/vendas/vendas.service';
 import { VendedoresService } from 'src/app/services/vendedores/vendedores.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-cad-vendas',
     templateUrl: './cad-vendas.component.html',
     styleUrls: ['./cad-vendas.component.scss']
 })
-export class CadVendasComponent implements OnInit  {
+export class CadVendasComponent implements OnInit {
 
     vendas: VendasComProdutosDTO = {
         vendasDTO: {
@@ -75,14 +77,15 @@ export class CadVendasComponent implements OnInit  {
         private vendedoresService: VendedoresService,
         private produtosService: ProdutosService,
         private toastrService: NbToastrService, private router: Router,
-        private sidebarService: NbSidebarService
+        private sidebarService: NbSidebarService,
+        private dialog: MatDialog
     ) {
         this.inputFormControl = new FormControl();
         this.filteredClientes$ = this.inputFormControl.valueChanges.pipe(
             startWith(''),
             map(value => this.filterClientes(value))
         );
-        this.toggle()
+        // this.toggle()
     }
 
     clientes: Clientes[] = [];
@@ -101,9 +104,9 @@ export class CadVendasComponent implements OnInit  {
 
     vendedores: Vendedores[] = [];
     getVendedores(): void {
-      this.vendedoresService.get().subscribe(vendedores => {
-        this.vendedores = vendedores;
-      });
+        this.vendedoresService.get().subscribe(vendedores => {
+            this.vendedores = vendedores;
+        });
     }
 
     private filterClientes(value: string): Clientes[] {
@@ -145,35 +148,53 @@ export class CadVendasComponent implements OnInit  {
         }
     }
 
-    create() {
-        console.log(this.vendas)
-        if (this.vendas.vendasDTO.valorPago > this.totalVenda) {
-            this.toastrService.danger(`Valor pago deve ser menor que R$${this.totalVenda}`, "Danger");
-        } else {
-
-            this.vendasService.cadastrarVendas(this.vendas).subscribe(
-                response => {
-                    this.toastrService.success("Venda cadastrada com sucesso!", "Sucesso");
-                    setTimeout(() => {
-                        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-                            this.router.navigate(['/cad-venda']); // Navega para a rota de cadastro de armazém
-                        });
-                    }, 1000);
-
-                },
-                (error) => {
-                    console.log('Erro ao cadastrar venda:', error);
-                    if (error.status === 403) {
-                        setTimeout(() => {
-                            location.reload(); // Recarrega a página após1 segundos
-                        }, 2000);
-                    } else {
-                        this.toastrService.danger('Erro ao cadastrar venda.', 'Erro');
-                    }
-
-                }
-            )
+    removeProduto() {
+        const ultimoProduto = this.vendas.produtosVendidosDTO.pop();
+      
+        if (ultimoProduto) {
+          this.totalVenda -= ultimoProduto.valorTotalProduto;
         }
     }
 
+    create() {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '300px',
+            data: {
+                title: 'Confirmar cadastro',
+                message: 'Tem certeza que deseja cadastrar esta venda?'
+            }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log(this.vendas)
+                if (this.vendas.vendasDTO.valorPago > this.totalVenda) {
+                    this.toastrService.danger(`Valor pago deve ser menor que R$${this.totalVenda}`, "Danger");
+                } else {
+
+                    this.vendasService.cadastrarVendas(this.vendas).subscribe(
+                        response => {
+                            this.toastrService.success("Venda cadastrada com sucesso!", "Sucesso");
+                            setTimeout(() => {
+                                this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+                                    this.router.navigate(['/home']); // Navega para a rota de cadastro de armazém
+                                });
+                            }, 1000);
+
+                        },
+                        (error) => {
+                            console.log('Erro ao cadastrar venda:', error);
+                            if (error.status === 403) {
+                                setTimeout(() => {
+                                    location.reload(); // Recarrega a página após1 segundos
+                                }, 2000);
+                            } else {
+                                this.toastrService.danger('Erro ao cadastrar venda.', 'Erro');
+                            }
+
+                        }
+                    )
+                }
+            }
+        })
+    }
 }

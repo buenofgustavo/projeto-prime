@@ -58,6 +58,7 @@ import { CadCidadesComponent } from './components/cad-cidades/cad-cidades.compon
 import { CadProdutosComponent } from './components/cad-produtos/cad-produtos.component';
 import { CadVendedoresComponent } from './components/cad-vendedores/cad-vendedores.component';
 import { CadCategoriasComponent } from './components/cad-categorias/cad-categorias.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { CadCategoriasComponent } from './components/cad-categorias/cad-categori
     CadCidadesComponent,
     CadProdutosComponent,
     CadVendedoresComponent,
-    CadCategoriasComponent
+    CadCategoriasComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     AppRoutingModule, HttpClientModule, FormsModule, ReactiveFormsModule, BrowserModule, BrowserAnimationsModule, NbEvaIconsModule,

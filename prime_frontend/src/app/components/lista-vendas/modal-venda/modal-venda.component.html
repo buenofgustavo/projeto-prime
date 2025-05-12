@@ -26,6 +26,13 @@
                     <input disabled type="text" nbInput fullWidth id="vendasDTO.nomeCliente"
                         [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.nomeCliente" name="vendasDTO.nomeCliente" required>
                 </nb-form-field>
+                
+                <nb-form-field class="form-field">
+                    <label for="vendasDTO.id">Número da Venda</label>
+                    <input disabled type="text" nbInput fullWidth id="vendasDTO.id"
+                        [(ngModel)]="data.vendasComProdutosDTO.vendasDTO.id" name="vendasDTO.id" required>
+                </nb-form-field>
+                
 
                 <nb-form-field class="form-field">
                     <label for="valorPago">Valor Pago</label>
@@ -58,7 +65,7 @@
                         <tr>
                             <th>#</th>
                             <th>Produto</th>
-                            <th>Qnt</th>
+                            <th>Qtd</th>
                             <th>Unit.</th>
                             <th>Total</th>
                         </tr>

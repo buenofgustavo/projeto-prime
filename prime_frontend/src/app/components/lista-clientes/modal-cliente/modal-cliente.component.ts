@@ -10,6 +10,8 @@ import { CategoriasService } from 'src/app/services/categorias/categorias.servic
 import { CidadesService } from 'src/app/services/cidades/cidades.service';
 import { ClientesService } from 'src/app/services/clientes/clientes.service';
 import { VendasService } from 'src/app/services/vendas/vendas.service';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-modal-cliente',
@@ -26,6 +28,7 @@ export class ModalClienteComponent implements OnInit {
     private categoriasService: CategoriasService,
     private cidadesService: CidadesService,
     private router: Router,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: { clientes: Clientes, acao: string }) {
   }
 
@@ -51,61 +54,80 @@ export class ModalClienteComponent implements OnInit {
   valorASerPago: number = 0;
 
   pagarSaldoDevedor() {
-
-    if (this.valorASerPago > this.data.clientes.saldoDevedor) {
-      this.toastrService.danger(`Valor pago deve ser menor que R$${this.data.clientes.saldoDevedor}`, "Danger");
-    }
-    else {
-      this.clientesService.pagarSaldoDevedor(this.data.clientes.id, this.valorASerPago).subscribe(
-        response => {
-          this.toastrService.success("Pagamento cadastrado com sucesso!", "Sucesso");
-          setTimeout(() => {
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/list-clientes']); // Navega para a rota de cadastro de armazém
-            });
-          }, 1000);
-
-        },
-        (error) => {
-          console.log('Erro ao cadastrar pagamento:', error);
-          if (error.status === 403) {
-            setTimeout(() => {
-              location.reload(); // Recarrega a página após1 segundos
-            }, 2000);
-          } else {
-            this.toastrService.danger('Erro ao cadastrar venda.', 'Erro');
-          }
-
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Confirmar cadastro',
+        message: 'Tem certeza que deseja cadastrar este pagamento?'
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (this.valorASerPago > this.data.clientes.saldoDevedor) {
+          this.toastrService.danger(`Valor pago deve ser menor que R$${this.data.clientes.saldoDevedor}`, "Danger");
         }
-      )
-    }
+        else {
+          this.clientesService.pagarSaldoDevedor(this.data.clientes.id, this.valorASerPago).subscribe(
+            response => {
+              this.toastrService.success("Pagamento cadastrado com sucesso!", "Sucesso");
+              setTimeout(() => {
+                this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+                  this.router.navigate(['/list-clientes']); // Navega para a rota de cadastro de armazém
+                });
+              }, 1000);
 
+            },
+            (error) => {
+              console.log('Erro ao cadastrar pagamento:', error);
+              if (error.status === 403) {
+                setTimeout(() => {
+                  location.reload(); // Recarrega a página após1 segundos
+                }, 2000);
+              } else {
+                this.toastrService.danger('Erro ao cadastrar venda.', 'Erro');
+              }
+
+            }
+          )
+        }
+      }
+    })
   }
 
   atualizarCliente() {
-    this.clientesService.cadastrarClientes(this.data.clientes).subscribe(
-      response => {
-        this.toastrService.success("Cliente cadastrado com sucesso!", "Sucesso");
-        setTimeout(() => {
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/list-cliente']); // Navega para a rota de cadastro de armazém
-          });
-        }, 1000);
-
-      },
-      (error) => {
-        console.log('Erro ao cadastrar cliente:', error);
-        if (error.status === 403) {
-          setTimeout(() => {
-            location.reload(); // Recarrega a página após1 segundos
-          }, 2000);
-        } else {
-          this.toastrService.danger('Erro ao cadastrar cliente.', 'Erro');
-        }
-
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Confirmar cadastro',
+        message: 'Tem certeza que deseja atualizar este cliente?'
       }
-    )
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.clientesService.cadastrarClientes(this.data.clientes).subscribe(
+          response => {
+            this.toastrService.success("Cliente cadastrado com sucesso!", "Sucesso");
+            setTimeout(() => {
+              this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+                this.router.navigate(['/list-clientes']); // Navega para a rota de cadastro de armazém
+              });
+            }, 1000);
 
+          },
+          (error) => {
+            console.log('Erro ao cadastrar cliente:', error);
+            if (error.status === 403) {
+              setTimeout(() => {
+                location.reload(); // Recarrega a página após1 segundos
+              }, 2000);
+            } else {
+              this.toastrService.danger('Erro ao cadastrar cliente.', 'Erro');
+            }
+
+          }
+        )
+      }
+    })
   }
 
 }
